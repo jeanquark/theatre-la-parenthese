@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   viewBox="0 0 512.00001 512"
+   version="1.1"
+   id="svg7463"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   sodipodi:docname="model_table_round_4_seats.svg">
+  <defs
+     id="defs7457" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="-125.86366"
+     inkscape:cy="263.86295"
+     inkscape:document-units="px"
+     inkscape:current-layer="svg7463"
+     showgrid="false"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:window-width="1920"
+     inkscape:window-height="1001"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     units="px"
+     viewbox-x="0">
+    <sodipodi:guide
+       position="429.8199,255.56859"
+       orientation="0,1"
+       id="guide8027"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="256.07367,526.60515"
+       orientation="1,0"
+       id="guide8145"
+       inkscape:locked="false" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7460">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <circle
+     r="109.82428"
+     cy="256.22806"
+     cx="257.87921"
+     id="table"
+     style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.20727964;stroke-opacity:1"
+     inkscape:label="#path8008" />
+  <rect
+     y="212.80794"
+     x="377.51248"
+     height="85.799065"
+     width="85.799065"
+     id="seat02"
+     style="fill:#000000;stroke-width:0.35470316"
+     inkscape:label="#rect825-43" />
+  <rect
+     y="374.68314"
+     x="214.40981"
+     height="85.799065"
+     width="85.799065"
+     id="seat03"
+     style="fill:#000000;stroke-width:0.35470316"
+     inkscape:label="#rect825-4" />
+  <rect
+     y="212.63899"
+     x="52.527931"
+     height="85.799065"
+     width="85.799065"
+     id="seat04"
+     style="fill:#000000;stroke-width:0.35470316"
+     inkscape:label="#rect825-3" />
+  <rect
+     y="50.014736"
+     x="214.45744"
+     height="85.799065"
+     width="85.799065"
+     id="seat01"
+     style="fill:#000000;stroke-width:0.35470316"
+     inkscape:label="#rect825" />
+</svg>

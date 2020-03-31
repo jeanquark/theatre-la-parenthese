@@ -1,0 +1,88 @@
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="512"
+   height="512"
+   viewBox="0 0 135.46666 135.46667"
+   version="1.1"
+   id="svg4984">
+  <g
+     id="layer1"
+     transform="translate(0,-161.53332)">
+    <circle
+       style="fill:#000000;stroke:#000000;stroke-width:0.26458332;stroke-opacity:1"
+       id="path5529"
+       cx="71.4375"
+       cy="231.98808"
+       r="30.805059" />
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:1.01310003;stroke-opacity:1"
+       id="rect5531"
+       width="14.559519"
+       height="14.890248"
+       x="-125.10199"
+       y="160.64085"
+       transform="rotate(-46.378812)" />
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:1.01310003;stroke-opacity:1"
+       id="rect5531-2"
+       width="14.559519"
+       height="14.890248"
+       x="63.732327"
+       y="180.21162"
+       transform="rotate(0.01191034)" />
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:1.01310003;stroke-opacity:1"
+       id="rect5531-2-0"
+       width="14.559519"
+       height="14.890248"
+       x="20.738642"
+       y="224.23526"
+       transform="rotate(0.01191034)" />
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:1.01310003;stroke-opacity:1"
+       id="rect5531-2-1"
+       width="14.559519"
+       height="14.890248"
+       x="-143.30022"
+       y="218.36349"
+       transform="rotate(-39.433892)" />
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:1.01310003;stroke-opacity:1"
+       id="rect5531-2-6"
+       width="14.559519"
+       height="14.890248"
+       x="63.742332"
+       y="267.05051"
+       transform="rotate(0.01191034)" />
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:1.01310003;stroke-opacity:1"
+       id="rect5531-2-09"
+       width="14.559519"
+       height="14.890248"
+       x="-76.253876"
+       y="206.69693"
+       transform="rotate(-44.673481)" />
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:1.01310003;stroke-opacity:1"
+       id="rect5531-2-7"
+       width="14.559519"
+       height="14.890248"
+       x="107.20044"
+       y="223.00726"
+       transform="rotate(0.01191034)" />
+    <rect
+       style="fill:#000000;stroke:#000000;stroke-width:1.01310003;stroke-opacity:1"
+       id="rect5531-2-2"
+       width="14.559519"
+       height="14.890248"
+       x="252.43826"
+       y="101.51173"
+       transform="rotate(45.562121)" />
+  </g>
+</svg>

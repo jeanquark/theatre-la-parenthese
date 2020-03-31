@@ -1,0 +1,94 @@
+@import 'variables';
+@import '~bootstrap/scss/bootstrap';
+@import '~sweetalert2/src/sweetalert2';
+
+@import 'elements/card';
+@import 'elements/navbar';
+@import 'elements/buttons';
+@import 'elements/transitions';
+
+// @import 'node_modules/bootstrap/scss/bootstrap';
+// @import 'node_modules/bootstrap-vue/src/index.scss';
+// @import '~bootstrap/scss/bootstrap';
+// Bootstrap Vue
+@import '~bootstrap-vue/src/index.scss';
+
+// General style
+button:focus {
+	outline: none;
+}
+
+.progress {
+	background-color: $primary !important;
+}
+
+// Vue sidebar menu
+@import "vue-sidebar-menu/src/scss/vue-sidebar-menu.scss";
+
+// router-link-exact-active router-link-active vsm--link vsm--link_level-1 vsm--link_active vsm--link_exact-active
+
+
+.v-sidebar-menu .vsm--link_level-1.vsm--link_active, .v-sidebar-menu .vsm--link_level-1.vsm--link_exact-active {
+	box-shadow: 3px 0px 0px 0px $primary inset;
+}
+
+.v-sidebar-menu .vsm--dropdown .vsm--list {
+	background-color: #F5F5F5;
+}
+
+.v-sidebar-menu .vsm--link_level-1 .vsm--icon {
+	background-color: transparent;
+	height: 16px;
+	margin-top: 7px;
+}
+
+.v-sidebar-menu .vsm--link_level-2 .vsm--icon {
+	background-color: transparent;
+	height: 16px;
+	margin-top: 7px;
+}
+.v-sidebar-menu.vsm_expanded .vsm--item_open .vsm--link_level-1 .vsm--icon {
+	background-color: transparent;
+}
+
+.v-sidebar-menu .vsm--link_level-1.vsm--link_exact-active .vsm--icon, .v-sidebar-menu .vsm--link_level-1.vsm--link_active .vsm--icon {
+	background-color: transparent;
+}
+
+.v-sidebar-menu.vsm_expanded .vsm--item_open .vsm--link_level-1 {
+	background-color: $primary;
+}
+
+.v-sidebar-menu .vsm--mobile-bg {
+	background-color: $primary;
+}
+.v-sidebar-menu .vsm--link.vsm--link_mobile-item {
+	background-color: $primary;
+}
+
+
+// Vue noty
+@import '~vuejs-noty/dist/vuejs-noty.css';
+.noty_theme__mint.noty_bar .noty_body {
+    font-size: 18px;
+}
+
+.navigation a:hover {
+	color: $primary;
+	text-decoration: none;
+}
+.navigation span:hover {
+	color: $primary-hover;
+	text-decoration: underline;
+}
+
+.table th {
+	vertical-align: middle;
+}
+.table td {
+	vertical-align: middle;
+}
+
+.help-block {
+	margin-bottom: 6px;
+}

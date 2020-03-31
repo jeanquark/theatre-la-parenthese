@@ -1,0 +1,43 @@
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" version="1.1" id="model_table_round_8_seats">
+    <ellipse style="fill:#000;fill-opacity:1;stroke:none;stroke-width:.21898325;stroke-opacity:1" id="table" cx="253.528" cy="255.13809" rx="116.53145" ry="115.5213"/>
+<!--Seat #01-->
+    <g id="seat01_group" class="seat">
+        <path id="seat01_path" style="fill-opacity:1;stroke:none;stroke-width:.57979274px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 326.34705,134.25309 53.71019,-51.138704 53.23043,55.907084 -53.71019,51.1387 z" />
+        <text id="seat01_text" fill="#9acd32" font-size="50" y="156" x="354"/>
+    </g>
+<!--Seat #02-->
+    <g id="seat02_group" class="seat">
+        <path id="seat02_path" style="fill-opacity:1;stroke:none;stroke-width:.57979274px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M 392.23252,293.4212 V 219.25954 H 469.4276 V 293.4212 Z" />
+        <text id="seat02_text" fill="#9acd32" font-size="50" y="274" x="404"/>
+    </g>
+<!--Seat #03-->
+    <g id="seat03_group" class="seat">
+        <path id="seat03_path" style="fill-opacity:1;stroke:none;stroke-width:.57979274px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 327.86502,382.18492 53.76814,-51.07777 53.167,55.96741 -53.76814,51.07777 z" />
+        <text id="seat03_text" fill="#9acd32" font-size="50" y="398" x="355"/>
+    </g>
+<!--Seat #04-->
+    <g id="seat04_group" class="seat">
+        <path id="seat04_path" style="fill-opacity:1;stroke:none;stroke-width:.57979274px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 214.95076,463.6319 v -74.16166 h 77.19508 v 74.16166 z" />
+        <text id="seat04_text" fill="#9acd32" font-size="50" y="440" x="228"/>
+    </g>
+<!--Seat #05-->
+    <g id="seat05_group" class="seat">
+        <path id="seat05_path" style="fill-opacity:1;stroke:none;stroke-width:.57979274px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 79.835333,375.13614 52.772277,-52.10604 54.23732,54.9308 -52.77228,52.10604 z" />
+        <text id="seat05_text" fill="#9acd32" font-size="50" y="396" x="120"/>
+    </g>
+<!--Seat #06-->
+    <g id="seat06_group" class="seat">
+        <path id="seat06_path" style="fill-opacity:1;stroke:none;stroke-width:.57979274px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="m 41.709586,293.92627 v -74.16166 h 77.195084 v 74.16166 z" />
+        <text id="seat06_text" fill="#9acd32" font-size="50" y="272" x="54"/>
+    </g>
+<!--Seat #07-->
+    <g id="seat07_group" class="seat">
+        <path id="seat07_path" style="fill-opacity:1;stroke:none;stroke-width:.57979274px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M 74.275971,133.86836 124.36972,79.182266 181.29263,131.325 131.19888,186.01109 Z" />
+        <text id="seat07_text" fill="#9acd32" font-size="50" y="150" x="104"/>
+    </g>
+<!--Seat #08-->
+    <g id="seat08_group" class="seat">
+        <path id="seat08_path" style="fill-opacity:1;stroke:none;stroke-width:.57979274px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" d="M 216.3965,121.35334 V 47.191674 h 77.19508 v 74.161666 z" />
+        <text id="seat08_text" fill="#9acd32" font-size="50" y="103" x="228"/>
+    </g>
+</svg>

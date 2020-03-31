@@ -1,0 +1,23 @@
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" version="1.1" id="model_table_round_4_seats">
+    <circle r="109.82428" cy="256.31546" cx="256.45905" id="table" style="fill:#000;fill-opacity:1;stroke:none;stroke-width:.20727964;stroke-opacity:1"/>
+<!--Seat #01-->
+    <g id="seat01_group" class="seat">
+        <rect id="seat01_path" y="50.10207" x="213.03725" height="85.799065" width="85.799065" />
+        <text id="seat01_text" font-size="60" fill="#9acd32" y="132" x="215"/>
+    </g>
+<!--Seat #02-->
+    <g id="seat02_group" class="seat">
+        <rect id="seat02_path" y="212.89526" x="376.09232" height="85.799065" width="85.799065" />
+        <text id="seat02_text" font-size="60" fill="#9acd32" y="296" x="375"/>
+    </g>
+<!--Seat #03-->
+    <g id="seat03_group" class="seat">
+        <rect id="seat03_path" y="374.77057" x="212.98961" height="85.799065" width="85.799065" />
+        <text id="seat03_text" font-size="60" fill="#9acd32" y="457" x="215"/>
+    </g>
+<!--Seat #04-->
+    <g id="seat04_group" class="seat">
+        <rect id="seat04_path" y="212.72635" x="51.107761" height="85.799065" width="85.799065" />
+        <text id="seat04_text" font-size="60" fill="#9acd32" y="296" x="52"/>
+    </g>
+</svg>

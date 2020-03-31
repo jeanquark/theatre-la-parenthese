@@ -1,0 +1,6 @@
+import './axios'
+import './fontawesome'
+import 'bootstrap'
+import './vuejs-noty'
+import './vue-moment'
+import './vue-bootstrap'
