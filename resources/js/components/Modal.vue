@@ -1,6 +1,6 @@
 <template>
     <b-modal id="seat-modal" hide-footer>
-        <template v-slot:modal-title
+        <template v-slot:modal-title v-if="selectedTable"
             >Réservez vos places:
             <span class="primary-color">Table {{ selectedTable.table_number }}</span>
         </template>

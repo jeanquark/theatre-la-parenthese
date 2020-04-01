@@ -192,14 +192,14 @@ export default {
             try {
                 console.log('clickOnTablePlan: ', event)
                 const tableId = event.target.id
-                // console.log('tableId: ', tableId)
+                console.log('tableId: ', tableId)
 
                 const tableSvgId = tableId.substring(0, tableId.indexOf('_'))
-                // console.log('tableSvgId: ', tableSvgId)
+                console.log('tableSvgId: ', tableSvgId)
 
                 const element = SVG.get(`${tableSvgId}_group`)
-                // console.log('element: ', element)
-                // console.log("element.hasClass('table'): ", element.hasClass('table'))
+                console.log('element: ', element)
+                console.log("element.hasClass('table'): ", element.hasClass('table'))
 
                 if (element && element.hasClass('table')) {
                     // // if (tableSvgId) {
