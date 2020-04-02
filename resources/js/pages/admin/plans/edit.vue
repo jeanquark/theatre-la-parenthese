@@ -9,22 +9,22 @@
         </b-breadcrumb>
 
         <h2 class="text-center">
-            Editer plan de salle <span v-if="loadedPlan">{{ loadedPlan.id }}</span>
+            Editer plan de salle <span v-if="plan">{{ plan.id }}</span>
         </h2>
         <!-- newTablesSVGArray: {{ newTablesSVGArray }}<br /><br /> -->
         <!-- newTablesArray: {{ newTablesArray }}<br /><br /> -->
         <!-- deletedTablesArray: {{ deletedTablesArray }}<br /><br /> -->
-        <!-- loadedPlan: {{ loadedPlan }}<br /><br /> -->
+        <!-- plan: {{ plan }}<br /><br /> -->
         <!-- selectedTable: {{ selectedTable }}<br /><br /> -->
         <!-- newTable: {{ newTable }}<br /><br /> -->
-        <h4 class="text-center" v-if="loadedPlan">{{ loadedPlan.performance.date | moment('dddd Do MMM YYYY HH:mm') }}</h4>
+        <h4 class="text-center" v-if="plan && plan.performance">{{ plan.performance.date | moment('dddd Do MMM YYYY HH:mm') }}</h4>
         <b-row class="justify-content-center mt-5" v-if="loadingSvg">
             <!-- <font-awesome-icon icon="spinner" size="lg" spin /> -->
             <b-spinner variant="primary" label="Spinning"></b-spinner>
         </b-row>
 
         <b-row class="justify-content-center my-3" v-if="!loadingSvg && svgFile">
-            <b-col cols="12" sm="4" md="2" v-for="table in loadedTables" :key="table.id">
+            <b-col cols="12" sm="4" md="2" v-for="table in tables" :key="table.id">
                 <b-card :img-src="`/images/svg/models/model_${table.svg_id}.svg`" img-alt="Image" img-top @click="addTableModal(table)" class="available-table">
                     <b-card-text class="text-center">{{ table.name }}</b-card-text>
                 </b-card>
@@ -32,7 +32,7 @@
         </b-row>
 
         <b-row class="justify-content-center my-3" v-if="!loadingSvg && svgFile">
-            <b-col cols="12" md="8" v-if="loadedPlan && loadedPlan.svg_id" @click="clickOnTablesPlan($event)">
+            <b-col cols="12" md="8" v-if="plan && plan.svg_id" @click="clickOnTablesPlan($event)">
                 <div ref="svgFile" v-html="svgFile" class="primary-border"></div>
             </b-col>
 
@@ -107,10 +107,13 @@ export default {
             }
 
             // if (!this.$store.getters['plans/plans'][planId]) {
-            const { svgPlan } = await this.$store.dispatch('plans/fetchPlanById', { planId })
-            this.svgFile = svgPlan
+                await this.$store.dispatch('plans/fetchPlanById', { planId })
+            // this.svgFile = svgPlan
             // }
-            const fileContent = ''
+                // console.log('this.plan', this.plan)
+            // // const fileContent = ''
+            // this.svgFile = this.$store.getters['plans/plans'][planId]['svg_plan']
+            this.svgFile = this.plan['svg_plan']
 
             // const { data } = await axios.post(`/api/plans/svg`, { planSVG })
             // console.log('data: ', data)
@@ -155,13 +158,13 @@ export default {
         loading() {
             return this.$store.getters['loading/loading']
         },
-        loadedPlan() {
+        plan() {
             return this.$store.getters['plans/plans'][parseInt(this.$route.params.id)]
         },
-        loadedTables() {
+        tables() {
             return this.$store.getters['tables/tables']
         },
-        loadedPlanTables() {
+        planTables() {
             return this.$store.getters['planTables/planTables']
         }
     },
@@ -215,9 +218,9 @@ export default {
                         }
                     } else {
                         // Existing table, show each seat number & reservation status
-                        this.selectedTable = this.loadedPlan['plan_tables'].find(table => table.svg_id === tableSvgId)
+                        this.selectedTable = this.plan['plan_tables'].find(table => table.svg_id === tableSvgId)
                         // console.log('selectedTable: ', this.selectedTable)
-                        this.selectedTable['seats'] = this.loadedPlan['plan_seats'].filter(seat => seat.plan_table_id === this.selectedTable.id)
+                        this.selectedTable['seats'] = this.plan['plan_seats'].filter(seat => seat.plan_table_id === this.selectedTable.id)
 
                         const tableModel = SVG.select(`#model_${this.selectedTable.svg_model}`).first()
                         // console.log('tableModel: ', tableModel)
@@ -266,7 +269,7 @@ export default {
             
 
             // Define table number
-            let tableNumber = 1
+            let tableNumber = '01'
 
             const tablesPlan = SVG('tables_plan').svg()
             const existingTablesNumbers = tablesPlan.match(/data-table-number="\d+"/g)
@@ -355,7 +358,7 @@ export default {
                 }
                 // return
 
-                const planSvgId = this.loadedPlan.svg_id
+                const planSvgId = this.plan.svg_id
                 const newPlanSVG = SVG('tables_plan')
                     .svg()
                     .replace('xmlns:svgjs="http://svgjs.com/svgjs"', '')
@@ -370,7 +373,10 @@ export default {
                 await this.$store.dispatch('plans/updatePlan', { planSvgId, newTablesArray, deletedTablesArray, newPlanSVG })
                 this.$store.commit('loading/SET_LOADING', false, { root: true })
                 this.$noty.success('Le plan de salle a été mis à jour avec succès!')
-                this.$router.push('/admin/plans')
+                // this.$router.push('/admin/plans')
+                setTimeout(() => {
+                    window.location.href = '../../plans'
+                }, 1000)
             } catch (error) {
                 this.$store.commit('loading/SET_LOADING', false, { root: true })
                 console.log('error: ', error)

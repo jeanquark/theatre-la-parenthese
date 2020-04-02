@@ -9,8 +9,7 @@ use App\Plan;
 use App\PlanTable;
 use App\PlanSeat;
 use View;
-use App\Http\Requests\StorePerformance;
-use App\Http\Requests\EditPerformance;
+use App\Http\Requests\StorePlan;
 use Illuminate\Support\Facades\Storage;
 use Str;
 use File;
@@ -42,7 +41,7 @@ class PlansController extends Controller
     public function getPlan(Request $request, $id)
     {
         $plan = Plan::with(['performance', 'performance.show', 'plan_tables', 'plan_seats'])->find($id);
-        $svgPlan = Storage::disk('images')->get('svg/plans/plan_' . $plan->id . '.svg');
+        $svgPlan = Storage::disk('images')->get('svg/plans/' . $plan->svg_id . '.svg');
 
         return response()->json([
             'success' => true,
@@ -51,31 +50,21 @@ class PlansController extends Controller
             ], 200);
     }
 
-    public function getSvg (Request $request, $planSvgId) {
-        $svgPlan = Storage::disk('images')->get('svg/plans/' . $planSvgId);
-
-        return response()->json([
-            'success' => true,
-            'svgPlan' => $svgPlan
-            ], 200);
-    }
-
-    // public function getSvg (Request $request) {
-    //     $svgPlan = Storage::disk('images')->get('svg/plans/' . $request->planSVG);
-
-    //     return response()->json([
-    //         'success' => true,
-    //         'svgPlan' => $svgPlan
-    //         ], 200);
-    // }
-
-    protected function create(Request $request)
+    protected function create(StorePlan $request)
     {   
+        // return response()->json([
+        //     'status' => 'success',
+        //     '$request->newPlanSVG' => $request->newPlanSVG,
+        //     '$request->newPlan' => $request->newPlan,
+        //     '$request->newPerformance' => $request->newPerformance,
+        //     '$request->newTablesArray' => $request->newTablesArray,
+        //     ], 200);
+
         // 1) Save new performance
         $newPerformance = new Performance;
         $newPerformance->show_id = $request->newPerformance['show_id'];
         $newPerformance->name = $request->newPerformance['name'];
-        $newPerformance->slug = str_slug($request->newPerforamnce['name']);
+        $newPerformance->slug = str_slug($request->newPerformance['name']);
         $newPerformance->date = $request->newPerformance['date'];
         $newPerformance->location = $request->newPerformance['location'];
 
@@ -128,35 +117,38 @@ class PlansController extends Controller
 
         // 4) Save new Plan as SVG images
         if ($request->newPlanSVG) {
-            file_put_contents('images/svg/plans/' . $newPlan->svg_id . '.svg', $request->newPlanSVG);
+            Storage::disk('images')->put('svg/plans/' . $newPlan->svg_id . '.svg', $request->newPlanSVG);
         }
+        // if ($request->newPlanSVG) {
+        //     file_put_contents('images/svg/plans/' . $newPlan->svg_id . '.svg', $request->newPlanSVG);
+        //     Storage::disk('images')->delete('svg/plans/' . $plan->svg_id . '.svg');
+        // }
 
         return response()->json([
             'status' => 'success',
             'message' => 'Table created successfully.',
+            'newPlan' => $newPlan
             ], 201);
     }
 
 
     protected function update(Request $request)
     {
-        // 1) Save new tables as SVG images
-        if ($request->newTablesSVGArray) {
-            for ($i = 0; $i < count($request->newTablesSVGArray); $i++) {
-                // file_put_contents('images/svg/tables/table_' . $request->newTablesArray[$i]['svg_id'] . '.svg', $request->newTablesSVGArray[$i]);
-                // file_put_contents('images/svg/plans/' . $request->planSvgId . '/table_' . $request->newTablesSVGArray[$i]['id'] . '.svg', $request->newTablesSVGArray[$i]['svg']);
-                file_put_contents('images/svg/plans/table_' . $request->newTablesSVGArray[$i]['id'] . '.svg', $request->newTablesSVGArray[$i]['svg']);
-            }
-        }
-        if ($request->newTablesArray) {
-            for ($i = 0; $i < count($request->newTablesArray); $i++) {
-                // $model = fopen('images/svg/models/model_' . $request->newTablesArray[$i]['svg_model'], 'w') or die('Unable to open file!');
-                // file_put_contents('images/svg/plans/' . $request->planSvgId . '/table_' . $request->newTablesArray[$i]['svg_id'] . '.svg', $model);
-            }
-        }
+        // return response()->json([
+        //     'status' => 'success',
+        //     'message' => 'Table updated successfully.',
+        //     'newPlanSVG' => $request->newPlanSVG,
+        //     'newTablesArray' => $request->newTablesArray,
+        //     'deletedTablesArray' => $request->deletedTablesArray
+        //     ], 200);
+
+        // // 1) Save new plan as SVG image
+        // if ($request->newTablesSVGArray) {
+        //     Storage::disk('images')->put('svg/plans/' . $request->newTablesSVGArray[$i]['id'] . '.svg', $request->newTablesSVGArray[$i]['svg']);
+        // }
         
 
-        // 2) Save new tables and seats in database
+        // 1) Save new tables and seats in database
         $newTablesArray = $request->newTablesArray;
         if ($newTablesArray) {
             for ($i = 0; $i < count($newTablesArray); $i++) {
@@ -198,7 +190,7 @@ class PlansController extends Controller
             }
         }
 
-        // 3) Delete dropped tables
+        // 2) Delete dropped tables
         $deletedTablesArray = $request->deletedTablesArray;
         for ($i = 0; $i < count($deletedTablesArray); $i++) {
             PlanTable::where('id', '=', $deletedTablesArray[$i]['id'])->delete();
@@ -239,39 +231,20 @@ class PlansController extends Controller
 
     protected function delete($id) {
         $plan = Plan::where('id', '=', $id)->first();
+
+        // 1) Delete file
+        if (Storage::disk('images')->exists('svg/plans/' . $plan->svg_id . '.svg')) {
+            Storage::disk('images')->delete('svg/plans/' . $plan->svg_id . '.svg');
+        }
+
+        // 2) Delete entry in DB
         $plan->delete();
 
-        // $reservedSeat = false;
-        // foreach($table->seats as $seat) {
-        //     if ($seat->is_reserved) {
-        //         $reservedSeat = true;
-        //     }
-        // }
-
-        // // Can only delete selected table if none of its seats is reserved
-        // if (!$reservedSeat) {
-        //     // 1) Delete table
-        //     $table->delete();
-        //     // 2) Delete all seats related to the table
-        //     foreach($table->seats as $seat) {
-        //         $seat->delete();
-        //     }
-        //     // 3) Remove table from plan SVG
-        //     unlink('images/svg/plans/' . $table->plan->svg_id . '/table_' . $svg_id . '.svg');
-
-        // // 4) Update plan SVG
-        // } else {
-        //     return response()->json([
-        //         'success' => false,
-        //         'status' => 'error',
-        //         'message' => 'There is at least one reserved seat.'
-        //     ], 409);
-        // }
-
         return response()->json([
-            'success' => false,
-            '$plan' => $plan,
-            '$plan->plan_tables' => $plan->plan_tables
+            'success' => true,
+            // '$plan' => $plan,
+            // '$plan->plan_tables' => $plan->plan_tables,
+            // '$plan->svg_id' => $plan->svg_id
         ], 200);
     }
 

@@ -174,7 +174,7 @@
 			},
 			async deletePlan (planId) {
 				try {
-					const value = await this.$bvModal.msgBoxConfirm(`Etes-vous sûr de vouloir supprimer le plan ${planId} et toutes les tables et les sièges qui lui sont liés?`, {
+					const value = await this.$bvModal.msgBoxConfirm(`Etes-vous sûr de vouloir supprimer le plan ${planId} et toutes les tables et les sièges qui lui sont attribués?`, {
 							okTitle: 'OK',
 							cancelTitle: 'Annuler',
 						}

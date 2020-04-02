@@ -76,7 +76,7 @@ export const actions = {
             const { data } = await axios.get(`/api/plans/${planId}`)
             console.log('data2: ', data)
             const abc = { ...data.plan, svg_plan: data.svgPlan }
-            console.log('abc: ', abc)
+            console.log('abc2: ', abc)
             commit('SET_PLAN', { ...data.plan, svg_plan: data.svgPlan })
             // return { svgPlan: data.svgPlan }
         } catch (error) {
@@ -84,20 +84,6 @@ export const actions = {
             throw error
         }
     },
-    // async fetchPlan ({ commit }, payload) {
-    //     try {
-	// 		console.log('fetchPlan action: ', payload)
-	// 		const { planId } = payload
-    //         const { data } = await axios.get(`/api/plans/${planId}`)
-    //         console.log('data2: ', data)
-    //         // commit('ADD_PLAN', data.plan)
-    //         commit('SET_PLAN', data.plan)
-    //         return { svgPlan: data.svgPlan }
-    //     } catch (error) {
-    //         console.log('vuex error: ', error)
-    //         throw error
-    //     }
-    // },
     async createPlan ({ commit }, payload) {
         try {
             const { newPlanSVG, newPlan, newPerformance, newTablesArray } = payload
@@ -112,8 +98,9 @@ export const actions = {
         try {
             console.log('Call to updatePlan action: ', payload)
             const { planSvgId, newTablesArray, deletedTablesArray, newPlanSVG } = payload
-            const abc = await axios.put(`/api/plans/${planSvgId}`, { planSvgId, newTablesArray, deletedTablesArray, newPlanSVG })
-            console.log('abc: ', abc)
+            await axios.put(`/api/plans/${planSvgId}`, { planSvgId, newTablesArray, deletedTablesArray, newPlanSVG })
+            // const abc = await axios.put(`/api/plans/${planSvgId}`, { planSvgId, newTablesArray, deletedTablesArray, newPlanSVG })
+            // console.log('abc: ', abc)
             // return abc
         } catch (error) {
             throw error
@@ -122,9 +109,8 @@ export const actions = {
     async deletePlan ({ commit }, payload) {
         try {
             const { planId } = payload
-            const abc = await axios.delete(`/api/plans/${planId}`)
-            console.log('abc: ', abc)
-            console.log('planId: ', planId)
+            const { data } = await axios.delete(`/api/plans/${planId}`)
+            console.log('data: ', data)
             commit('DELETE_PLAN', { planId })
         } catch (error) {
             throw error

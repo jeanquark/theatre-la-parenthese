@@ -1,8 +1,8 @@
 on: push
 name: Publish Website
 jobs:
-  FTP-Deploy-Action:
-    name: FTP-Deploy-Action
+  deploy-file-updates:
+    name: Deploy file updates
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
@@ -14,8 +14,8 @@ jobs:
         ftp-server: ${{ secrets.FTP_HOST }}/web/theatre-la-parenthese
         ftp-username: ${{ secrets.FTP_USERNAME }}
         ftp-password: ${{ secrets.FTP_PASSWORD }}
-  build:
-    name: Build
+  composer-install:
+    name: Composer install
     runs-on: ubuntu-latest
     steps:
     - name: executing remote ssh commands using password
@@ -31,3 +31,17 @@ jobs:
           php artisan key:generate
           composer install -q --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
           php artisan migrate --force
+  npm-build:
+    name: NPM build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [8.x, 10.x, 12.x]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm install
+    - run: npm run prod --if-present

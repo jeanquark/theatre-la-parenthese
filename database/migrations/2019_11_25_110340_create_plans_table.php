@@ -17,7 +17,7 @@ class CreatePlansTable extends Migration
 			$table->bigIncrements('id');
 			$table->unsignedBigInteger('performance_id');
 			$table->foreign('performance_id')->references('id')->on('performances')->onDelete('cascade');
-			$table->string('svg_id');
+			$table->string('svg_id')->unique();
 			$table->string('name');
 			$table->string('slug');
 			$table->integer('total_seats')->nullable();
