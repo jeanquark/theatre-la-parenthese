@@ -20,7 +20,7 @@ class CreatePlansTable extends Migration
 			$table->string('svg_id')->unique();
 			$table->string('name');
 			$table->string('slug');
-			$table->integer('total_seats')->nullable();
+			// $table->integer('total_seats')->nullable();
             $table->timestamps();
         });
     }

@@ -380,7 +380,7 @@ export default {
             } catch (error) {
                 this.$store.commit('loading/SET_LOADING', false, { root: true })
                 console.log('error: ', error)
-                this.$noty.error("Une erreur est apparue et le plan de salle n'a pas pu être mis à jour.")
+                this.$noty.error("Une erreur est apparue et le plan de salle n'a pas pu être mis à jour. Vous aller être redirigé vers la page des plans.")
             }
         },
         async deleteTable() {

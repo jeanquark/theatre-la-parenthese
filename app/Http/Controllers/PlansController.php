@@ -237,8 +237,12 @@ class PlansController extends Controller
             Storage::disk('images')->delete('svg/plans/' . $plan->svg_id . '.svg');
         }
 
-        // 2) Delete entry in DB
+        // 2) Delete entry in plans table
         $plan->delete();
+
+        // 3) Delete entry in performance table
+        $performance = Performance::where('id', '=', $id)->first();
+        $performance->delete();
 
         return response()->json([
             'success' => true,

@@ -131,7 +131,7 @@ export default {
             this.listenToBroadcastedEvents()
         } catch (error) {
             console.log('error: ', error)
-            this.$noty.error("Une erreur est survenue sur cette page. Si l'erreur persiste, veuillez contacter le webmaster.")
+            this.$noty.error("Nous sommes désolés. Le plan de salle n'a pas pu être récupéré. Veuillez contacter le webmaster si le problème persiste.")
         }
     },
     data() {
