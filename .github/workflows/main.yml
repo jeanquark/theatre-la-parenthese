@@ -31,17 +31,3 @@ jobs:
           php artisan key:generate
           composer install -q --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
           php artisan migrate --force
-  npm-build:
-    name: NPM build
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [8.x, 10.x, 12.x]
-    steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm install
-    - run: npm run prod --if-present
