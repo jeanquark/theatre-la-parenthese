@@ -1,7 +1,7 @@
 <template>
 	<div class="container">
 		<h2 class="text-center">Bienvenue sur la console d'administration du TLP</h2>
-		<p>03 avril 12:36</p>
+		<p></p>
 	</div>
 </template>
 

@@ -30,7 +30,14 @@
                 {{ formattedStatus(data.item.status) }}
             </template>
 
-            <template v-slot:cell(price)="data"> {{ parseInt(data.item.price) / 100 }} CHF </template>
+            <template v-slot:cell(price)="data">
+                <span v-if="data.item.price">
+                    {{ parseInt(data.item.price) / 100 }} CHF
+                </span>
+                <span v-else>
+                    <i>Non spécifié</i>
+                </span>
+            </template>
 
             <template v-slot:cell(actions)="data">
                 <b-button size="sm" variant="danger" @click="deletePlanSeatPreReservation(data.item)" v-if="data.item.status === 'pre_reservation'">Annuler ma pré-réservation</b-button>

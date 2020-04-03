@@ -120,7 +120,7 @@ export const actions = {
 
             // commit('REMOVE_FROM_USER_SEATS', { removedSeatId: planSeatId })
             commit('shoppingCart/REMOVE_FROM_SHOPPING_CART', { removedSeatId: planSeatId }, { root: true })
-            // commit('plans/UPDATE_PLAN', data.planSeat, { root: true })
+            commit('plans/UPDATE_PLAN', data.planSeat, { root: true })
         } catch (error) {
             console.log('error: ', error)
             throw error
@@ -133,7 +133,7 @@ export const actions = {
             const { data } = await axios.post(`/api/plan-seats/delete-seat-reservation`, { planSeatId })
             console.log('date: ', data)
             commit('REMOVE_FROM_USER_SEATS', { removedSeatId: planSeatId })
-            // commit('plans/UPDATE_PLAN', data.planSeat, { root: true })
+            commit('plans/UPDATE_PLAN', data.planSeat, { root: true })
             // commit('shoppingCart/REMOVE_FROM_SHOPPING_CART', { removedSeat: data.planSeat }, { root: true })
         } catch (error) {
             console.log('error: ', error)

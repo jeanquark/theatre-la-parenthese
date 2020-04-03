@@ -158,6 +158,31 @@ class SeatPlanController extends Controller
         ], 200);
     }
 
+    // public function deleteOutOfDateSeatPreReservations (Request $request) {
+    //     $planTables = PlanTable::where('plan_id', '=', $request->planId)->all();
+
+    //     foreach ($planTables as $planTable) {
+    //         $planSeat = PlanSeat::where('plan_table_id', '=', $planTable->id)->with(['table', 'user'])->first();
+
+    //     }
+
+    //     // Remove seat reservation only if the user that made the reservation is the one currently authenticated or if user is not specified and if reservation is not already confirmed
+    //     if ($planSeat->status !== 'reservation_confirmed') {
+    //         if ($planSeat->user_id === null || $planSeat->user_id === Auth::user()->id) {
+    //             $planSeat->update(['user_id' => NULL, 'is_reserved' => 0, 'status' => NULL]);
+	// 		    event(new UpdateTableSeat($planSeat));
+
+    //         }
+    //     }
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'planSeat' => $planSeat,
+    //         '$request->planSeatId' => $request->planSeatId,
+    //     ], 200);
+
+    // }
+
     public function deleteSeatReservation (Request $request) {
         $planSeat = PlanSeat::where('id', '=', $request->planSeatId)->with(['table', 'user'])->first();
 

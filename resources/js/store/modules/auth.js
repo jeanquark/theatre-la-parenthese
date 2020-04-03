@@ -79,6 +79,7 @@ export const actions = {
 
     async logout({ commit, state }) {
         try {
+            commit('shoppingCart/SET_SHOPPING_CART', [], { root: true })
             console.log('Call to logout vuex action')
             const token = state.token
             // console.log('token: ', token)

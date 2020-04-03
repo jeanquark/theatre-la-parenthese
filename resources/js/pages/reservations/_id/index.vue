@@ -73,18 +73,14 @@
 </template>
 
 <script>
+import moment from 'moment'
 import Modal from '~/components/Modal'
 // import Modal2 from '~/components/Modal2'
 export default {
     components: { Modal },
     layout: 'frontend',
     async created() {
-        // if (!this.$store.getters['plans/plans'][performanceId]) {
-        // await this.$store.dispatch('plans/fetchPlanById', { planId: performanceId })
-        // }
-        // const { svgPlan } = await this.$store.dispatch('plans/fetchPlanById', { planId: performanceId })
-        // console.log('svgPlan2: ', svgPlan)
-        // this.svgFile = svgPlan
+        
     },
     async mounted() {
         try {
@@ -95,19 +91,33 @@ export default {
                 await this.$store.dispatch('performances/fetchPerformanceById', { performanceId })
             }
 
-            // if (!this.$store.getters['plans/plans'][performanceId]) {
+            // Remove all pre-reservations that are out of date
+            // await this.$store.dispatch('planSeats/deleteOutOfDateSeatPreReservations', { planId: performanceId })
+
             await this.$store.dispatch('plans/fetchPlanById', { planId: performanceId })
             if (SVG.supported) {
                 for (const table of this.planTables) {
                     // console.log('table: ', table)
+
+
                     const tableSvgId = table.svg_id
                     // console.log('tableSvgId: ', tableSvgId)
                     const totalSeats = table.total_seats
                     // console.log('totalSeats: ', totalSeats)
                     let reservedSeats = 0
                     for (const seat of this.tableSeats[table.id]) {
-                        // console.log('seat: ', seat)
-                        // console.log('tableSvgId: ', tableSvgId)
+                        // Remove pre-reservation if out of date
+                        if (seat.status === 'pre_reservation') {
+                            console.log('DELETE_PAST_PRE_RESERVATIONS')
+                            const updated_at = moment(seat.updated_at)
+                            const now = moment().format('YYYY-MM-DD HH:mm:ss')
+                            const elapsed_time = Math.abs(updated_at.diff(now)/1000)
+                            console.log('elapsed_time: ', elapsed_time)
+                            const sixHours = 6 * 60 * 60
+                            if (elapsed_time > sixHours) {
+                                await this.$store.dispatch('planSeats/deletePlanSeatPreReservation', { planSeatId: seat.id })
+                            }
+                        }
 
                         const tableElement = SVG.get(`${tableSvgId}_group`)
                         // console.log('tableElement from reservations/_id/index: ', tableElement)
@@ -192,14 +202,13 @@ export default {
             try {
                 console.log('clickOnTablePlan: ', event)
                 const tableId = event.target.id
-                console.log('tableId: ', tableId)
+                // console.log('tableId: ', tableId)
 
                 const tableSvgId = tableId.substring(0, tableId.indexOf('_'))
-                console.log('tableSvgId: ', tableSvgId)
+                // console.log('tableSvgId: ', tableSvgId)
 
                 const element = SVG.get(`${tableSvgId}_group`)
-                console.log('element: ', element)
-                console.log("element.hasClass('table'): ", element.hasClass('table'))
+                // console.log('element: ', element)
 
                 if (element && element.hasClass('table')) {
                     // // if (tableSvgId) {

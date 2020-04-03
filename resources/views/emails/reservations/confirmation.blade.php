@@ -18,7 +18,7 @@
 <body>
 	<h2 style="text-align: center;">Vos réservations</h2>
 
-	<b>Cher Membre,</b>
+	<b>Cher spectateur,</b>
 
 	<p>Merci pour vos réservations. Voici un récapitulatif de votre commande:</p>
 
@@ -55,7 +55,7 @@
 			</td>
 			<td>
 				@if ($reservation->status === 'confirmation_pending')
-					{{ "En attente de réception du paiement" }}
+				{{ "En attente de réception du paiement" }}
 				@endif
 			</td>
 			<td>
@@ -82,17 +82,23 @@
 		</tr>
 	</table>
 
-		<p>Vous pouvez à tout moment vérifier l'état de vos réservations dans votre <a href="theatre-la-parenthese.test/mon-panier">panier d'achat</a> (vous devez être connecté).</p>
+	<br />
 
-		<div style="width: 300px; text-align: center; padding: 20px; border: 1px solid #000; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);">
-			<b>Théatre la parenthèse</b><br />
-			Compte postal: <b>{{ env('MIX_POSTAL_ACCOUNT') }}</b><br />
-			IBAN: <b>{{ env('MIX_IBAN') }}</b>
-		</div>
+	<p>Vous pouvez à tout moment vérifier l'état de vos réservations dans votre <a
+			href="theatre-la-parenthese.test/mon-panier">panier d'achat</a> (vous devez être connecté).</p>
 
-		<p>Pour toute question relative à vos réservations, n'hésitez pas à nous contacter à l'adresse {{ env('MIX_EMAIL') }}.</p>
+	<div
+		style="width: 30%; margin: 0 auto; text-align: center; line-height: 1.5em; center; padding: 20px; border: 1px solid #000; box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);">
+		<b>Théatre la parenthèse</b><br />
+		Compte postal: <b>{{ env('MIX_POSTAL_ACCOUNT') }}</b><br />
+		IBAN: <b>{{ env('MIX_IBAN') }}</b>
+	</div>
 
-	<br /><br />
+
+	<p>Pour toute question relative à vos réservations, n'hésitez pas à nous contacter à l'adresse
+		{{ env('MIX_EMAIL') }}.</p>
+
+	<br />
 	Avec nos meilleures salutations,<br />
 	L'Équipe du {{ config('app.name') }}
 
