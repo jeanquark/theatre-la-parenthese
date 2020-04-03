@@ -36,6 +36,11 @@ To see the app, visit theatre-la-parenthese.test in the browser
 
 ## Going live
 
+Before pushing to GitHub, run:
+```bash
+	npm run prod
+```
+
 This app uses [pusher.js](https://www.pusher.com) for realtime updates on seat reservations. To allow for proper websocketing, make sure you published these environment variables in .env file:
 + BROADCAST_DRIVER=pusher
 + PUSHER_APP_ID=

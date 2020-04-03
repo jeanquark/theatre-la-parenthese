@@ -8,8 +8,13 @@
         "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --disable-host-check --config=node_modules/laravel-mix/setup/webpack.config.js",
         "prod": "npm run production",
         "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
-        "lint": "eslint --fix --ext .js,.vue resources/js"
+        "lint": "eslint --fix --ext .js,.vue resources/js",
+        "build:add": "git add --all"
     },
+    "pre-commit": [
+        "prod",
+        "build:add"
+    ],
     "dependencies": {
         "@fortawesome/fontawesome-svg-core": "^1.2.17",
         "@fortawesome/free-brands-svg-icons": "^5.8.1",
@@ -65,6 +70,7 @@
         "eslint-plugin-vue": "^5.2.2",
         "laravel-mix": "^4.0.15",
         "laravel-mix-versionhash": "^1.0.7",
+        "pre-commit": "^1.2.2",
         "resolve-url-loader": "^2.3.1",
         "sass": "^1.20.1",
         "sass-loader": "^7.1.0",
