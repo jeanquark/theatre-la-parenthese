@@ -19,7 +19,7 @@
         </b-breadcrumb-item>
             <b-breadcrumb-item active>Montrer</b-breadcrumb-item>
         </b-breadcrumb>
-		<h2 class="text-center my-2">Représentation</h2>
+		<h2 class="text-center my-2">Représentation <span class="primary-color" v-if="performance">{{ performance.name }}</span></h2>
 		<!-- performance: {{ performance }}<br /><br /> -->
 
         <b-row class="justify-content-center">
@@ -35,7 +35,7 @@
                     v-if="!loading"
                 >
                     <template v-slot:cell(date)="row">
-                        {{ row.item.date | moment('Do MMMM YYYY') }}
+                        {{ row.item.date | moment('Do MMMM YYYY HH:mm') }}
                     </template>
                     <template v-slot:cell(is_sold_out)="row">
                         {{ row.item.is_sold_out ? 'Oui' : 'Non' }}
@@ -49,66 +49,18 @@
                 </b-table>
             </b-col>
         </b-row>
-
-		<!--<table class="table">
-  			<thead>
-    			<tr>
-      				<th scope="col">Champ</th>
-      				<th scope="col">Valeur</th>
-    			</tr>
-  			</thead>
-  			<tbody>
-    			<tr>
-      				<th scope="row">ID</th>
-      				<td>{{ loadedPerformance.id }}</td>
-    			</tr>
-    			<tr>
-      				<th scope="row">Date</th>
-      				<td>{{ loadedPerformance.date | moment('dddd, Do MMMM YYYY HH:mm') }}</td>
-    			</tr>
-    			<tr>
-      				<th scope="row">Lieu</th>
-      				<td>{{ loadedPerformance.location }}</td>
-    			</tr>
-    			<tr>
-      				<th scope="row">Complet?</th>
-      				<td>{{ loadedPerformance.is_sold_out }}</td>
-    			</tr>
-    			<tr v-if="loadedPerformance.show">
-      				<th scope="row">Spectacle</th>
-      				<td>{{ loadedPerformance.show.name }}</td>
-    			</tr>
-    			<tr v-if="loadedPerformance.plan">
-      				<th scope="row">Plan</th>
-      				<td>{{ loadedPerformance.plan.id }}</td>
-    			</tr>
-    			<tr>
-      				<th scope="row">Créé le</th>
-      				<td>{{ loadedPerformance.created_at | moment('DD MMMM YYYY HH:mm') }}</td>
-    			</tr>
-    			<tr>
-      				<th scope="row">Dernière modification</th>
-      				<td>{{ loadedPerformance.updated_at | moment('DD MMMM YYYY HH:mm') }}</td>
-    			</tr>
-  			</tbody>
-		</table>-->
-	<!-- </div> -->
   </b-container>
 </template>
 
 <script>
 	export default {
 		async created () {
-			this.performanceId = parseInt(this.$route.params.id)
-			// console.log('performanceId: ', performanceId)
-            if (!this.$store.getters['performances/performances'][this.performanceId]) {
-                await this.$store.dispatch('performances/fetchPerformanceById', { planId: this.planId })
+            if (!this.$store.getters['performances/performances'][this.$route.params.id]) {
+                await this.$store.dispatch('performances/fetchPerformanceById', { performanceId: this.$route.params.id })
             }
-			// await this.$store.dispatch('performances/fetchPerformanceById', { performanceId: this.performanceId })
         },
 		data () {
 			return {
-                performanceId: '',
                 sortBy: 'id',
                 sortDesc: true,
                 fields: [
@@ -129,7 +81,7 @@
                 return this.$store.getters['loading/loading']
             },
 			performance () {
-				return this.$store.getters['performances/performances'][this.performanceId]
+				return this.$store.getters['performances/performances'][this.$route.params.id]
 			},
             performanceArray () {
                 const array = []
@@ -140,6 +92,9 @@
 	}
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+@import './resources/sass/_variables.scss';
+.primary-color {
+    color: $primary;
+}
 </style>

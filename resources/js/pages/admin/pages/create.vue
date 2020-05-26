@@ -1,25 +1,25 @@
 <template>
     <b-container>
         <b-breadcrumb>
-            <b-breadcrumb-item to="/admin/plans" class="navigation">
+            <b-breadcrumb-item to="/admin/pages" class="navigation">
                 <font-awesome-icon icon="file-alt" />
-                <span>Plans</span>
+                <span>Pages</span>
             </b-breadcrumb-item>
             <b-breadcrumb-item active>Créer</b-breadcrumb-item>
         </b-breadcrumb>
-        <h2 class="text-center">Ajouter une nouvelle page</h2>
+        <h2 class="text-center">Créer une nouvelle page</h2>
 
-        <b-form @submit.prevent="addNewPage">
+        <b-form @submit.prevent="createNewPage">
             <b-row align-v="center" class="justify-content-start my-3 px-3">
-                <b-col cols="12" md="6">
-                    <b-form-group label="Entrer un titre pour cette page:" label-for="newPageTitle">
-                        <b-form-input id="newPageTitle" placeholder="Titre de la page" v-model="newPage.title"></b-form-input>
+                <b-col cols="12">
+                    <b-form-group label="Titre de la page:" label-for="name">
+                        <b-form-input id="name" name="name" placeholder="Titre de la page" :class="{ 'is-invalid': form.errors.has('name') }" v-model="form.name"></b-form-input>
+                        <has-error :form="form" field="name" />
                     </b-form-group>
                 </b-col>
+
                 <b-col cols="12">
-                    <b-form-group label="Contenu de la page:" label-for="newPageContent">
-                        <ckeditor v-model="newPage['content']" :config="editorConfig"></ckeditor>
-                    </b-form-group>
+                    <text-editor @toggleShowHTML="toggleShowHTML" />
                 </b-col>
             </b-row>
             <b-row class="justify-content-center my-2">
@@ -28,26 +28,29 @@
                     Créer nouvelle page
                 </b-button>
             </b-row>
+            <b-row class="justify-content-center">
+                <b-alert variant="danger" dismissible :show="form.errors.any()">Erreur lors de l'envoi. Veuillez vérifier la validité des champs.</b-alert>
+            </b-row>
         </b-form>
     </b-container>
 </template>
 
 <script>
-import CKEditor from 'ckeditor4-vue'
+import Form from 'vform'
+import TextEditor from '~/components/TextEditor'
 
 export default {
     components: {
-        ckeditor: CKEditor.component
+        TextEditor
     },
     async created() {},
     data() {
         return {
-            editorConfig: {
-                extraPlugins: ['justify', 'image2'],
-                filebrowserBrowseUrl: '/ckfinder/browser',
-                filebrowserUploadUrl: '/userfiles'
-            },
-            newPage: {}
+            showHTML: false,
+            form: new Form({
+                name: '',
+                content: ''
+            })
         }
     },
     computed: {
@@ -56,10 +59,24 @@ export default {
         }
     },
     methods: {
-        async addNewPage() {
+        toggleShowHTML(value) {
+            this.showHTML = value
+        },
+        async createNewPage() {
             try {
+                console.log('createNewPage')
                 this.$store.commit('loading/SET_LOADING', true)
-                await this.$store.dispatch('pages/createPage', { newPage: this.newPage })
+                let content
+                if (!this.showHTML) {
+                    content = document.getElementById('textBox').innerHTML
+                } else {
+                    content = document.getElementById('textBox').innerText
+                }
+                this.form['content'] = content
+                console.log('this.form: ', this.form)
+
+                await this.$store.dispatch('pages/createPage', this.form)
+
                 this.$store.commit('loading/SET_LOADING', false)
                 this.$noty.success('Nouvelle page créée avec succès!')
                 this.$router.push('/admin/pages')
@@ -72,4 +89,7 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+@import './resources/sass/_variables.scss'
+
+</style>

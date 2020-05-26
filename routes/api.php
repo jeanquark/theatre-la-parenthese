@@ -11,20 +11,20 @@ use Illuminate\Http\Request;
 | routes are loaded by the RouteServiceProvider within a group which
 | is assigned the "api" middleware group. Enjoy building your API!
 |
-*/
-
-
+ */
 
 // Pages Routes
+// Route::get('/pages', 'PagesController@getPages');
+// Route::get('/pages/{slug}', 'PagesController@getPageBySlug');
 Route::get('/pages', 'PagesController@getPages');
-Route::get('/pages/{slug}', 'PagesController@getPageBySlug');
+Route::get('/pages/{id}', 'PagesController@getPageById');
+Route::get('/pages/slug/{slug}', 'PagesController@getPageBySlug');
 
 // Plans Routes
 Route::get('/plans', 'PlansController@getAll');
 Route::get('/plans/{id}', 'PlansController@getPlan');
 
 // Tables Routes
-
 
 // Tables Plan Routes
 // Route::get('/plan-tables', 'TablePlanController@index');
@@ -60,8 +60,6 @@ Route::get('/performances/shows/{showId}', 'PerformancesController@getPerformanc
 
 // Route::get('/shopping-cart', 'ShoppingCartController@getShoppingCart');
 
-
-
 Route::group(['middleware' => 'guest:api'], function () {
     Route::post('login', 'Auth\LoginController@login');
     Route::post('register', 'Auth\RegisterController@register');
@@ -75,7 +73,6 @@ Route::group(['middleware' => 'guest:api'], function () {
     Route::post('oauth/{driver}', 'Auth\OAuthController@redirectToProvider');
     Route::get('oauth/{driver}/callback', 'Auth\OAuthController@handleProviderCallback')->name('oauth.callback');
 });
-
 
 Route::group(['middleware' => 'auth:api'], function () {
     Route::post('/logout', 'Auth\LoginController@logout');
@@ -119,9 +116,9 @@ Route::group(['middleware' => 'role:admin'], function () {
     Route::delete('/performances/{id}', 'PerformancesController@deletePerformance');
 
     // Plans
-    Route::post('/plans', 'PlansController@create');
-    Route::put('/plans/{id}', 'PlansController@update');
-    Route::delete('/plans/{id}', 'PlansController@delete');
+    Route::post('/plans', 'PlansController@createPlan');
+    Route::put('/plans/{id}', 'PlansController@updatePlan');
+    Route::delete('/plans/{id}', 'PlansController@deletePlan');
     // Route::post('/plans/svg', 'PlansController@getSvg');
 
     // Tables
@@ -135,11 +132,26 @@ Route::group(['middleware' => 'role:admin'], function () {
     // Route::put('/plan-tables', 'TablePlansController@update');
     Route::delete('/plan-tables/{svgId}', 'TablePlansController@delete');
 
-    Route::get('/pages/images', 'PagesController@getImages');
-    Route::post('/pages', 'PagesController@create');
-    Route::put('/pages/{slug}', 'PagesController@update');
-    Route::delete('/pages/{id}', 'PagesController@delete');
-    Route::post('/pages/upload-image', 'PagesController@uploadImage');
-});
+    // Pages
+    Route::post('/pages', 'PagesController@createPage');
+    Route::put('/pages/{id}', 'PagesController@updatePage');
+    Route::delete('/pages/{id}', 'PagesController@deletePage');
+    Route::post('/pages/upload-image', 'FilesController@uploadImage');
+    Route::post('/pages/upload-document', 'FilesController@uploadDocument');
 
-// Route::post('/send-message', 'MessagesController@sendMessage');
+    // Images
+    Route::get('/images', 'ImagesController@getImages');
+    Route::post('/images', 'ImagesController@uploadImage');
+    Route::post('/images/delete', 'ImagesController@deleteImage');
+    Route::post('/images/folder', 'ImagesController@createFolder');
+    Route::post('/images/folder/images', 'ImagesController@getImagesByFolder');
+    Route::post('/images/folder/delete', 'ImagesController@deleteFolder');
+
+    // Documents
+    Route::get('/documents', 'DocumentsController@getDocuments');
+    Route::post('/documents', 'DocumentsController@uploadDocument');
+    Route::post('/documents/delete', 'DocumentsController@deleteDocument');
+    Route::post('/documents/folder', 'DocumentsController@createFolder');
+    Route::post('/documents/folder/documents', 'DocumentsController@getDocumentsByFolder');
+    Route::post('/documents/folder/delete', 'DocumentsController@deleteFolder');
+});

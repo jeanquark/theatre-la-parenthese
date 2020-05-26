@@ -69,6 +69,13 @@ return [
             'root' => public_path('images'),
             'url' => env('APP_URL').'/images',
             'visibility' => 'public'
+        ],
+
+        'documents' => [
+            'driver' => 'local',
+            'root' => public_path('documents'),
+            'url' => env('APP_URL').'/documents',
+            'visibility' => 'public'
         ]
 
     ],

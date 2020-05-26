@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import axios from 'axios'
+import { objectToFormData } from 'object-to-formdata'
 
 // state
 export const state = {
@@ -8,9 +9,7 @@ export const state = {
 
 // getters
 export const getters = {
-	pages(state) {
-		return state.pages
-	}
+	pages: state => state.pages
 }
 
 // mutations
@@ -19,21 +18,21 @@ export const mutations = {
 		console.log('SET_PAGES: ', payload)
 		payload.forEach(page => {
             state.pages = Object.assign({}, state.pages, {
-                [page.slug]: page
+                [page.id]: page
             })
         })
 	},
 	SET_PAGE (state, payload) {
 		console.log('SET_PAGE: ', payload)
 		state.pages = Object.assign({}, state.pages, {
-            [payload.slug]: payload
+            [payload.id]: payload
         })
 	},
 	DELETE_PAGE (state, payload) {
         console.log('DELETE_PAGE: ', payload)
-        const { pageSlug } = payload
-        console.log('pageSlug: ', pageSlug)
-        Vue.set(state.pages, pageSlug, null)
+        const { pageId } = payload
+        console.log('pageId: ', pageId)
+		Vue.delete(state.pages, pageId)
     }
 }
 
@@ -44,7 +43,19 @@ export const actions = {
 			console.log('fetchPages vuex action')
 			const { data } = await axios.get(`/api/pages`)
 			console.log('data: ', data)
-			commit('SET_PAGES', data.pages)
+			commit('SET_PAGES', data)
+		} catch (error) {
+			console.log('error: ', error)
+			throw error
+		}
+	},
+	async fetchPageById ({ commit }, payload) {
+		try {
+			console.log('fetchPageById vuex action: ', payload)
+			const { pageId } = payload
+			const { data } = await axios.get(`/api/pages/${pageId}`)
+			console.log('data: ', data)
+			commit('SET_PAGE', data.page)
 		} catch (error) {
 			console.log('error: ', error)
 			throw error
@@ -52,9 +63,12 @@ export const actions = {
 	},
 	async fetchPageBySlug ({ commit }, payload) {
 		try {
-			// const slug = payload
 			console.log('fetchPageBySlug vuex action: ', payload)
-			const { data } = await axios.get(`/api/pages/${payload}`)
+			let { pageSlug } = payload
+			if (!pageSlug) {
+				pageSlug = 'accueil'
+			}
+			const { data } = await axios.get(`/api/pages/slug/${pageSlug}`)
 			console.log('data: ', data)
 			commit('SET_PAGE', data.page)
 		} catch (error) {
@@ -62,18 +76,29 @@ export const actions = {
 			throw error
 		}
 	},
-	async createPage ({ commit }, payload) {
+	// async fetchPageBySlug2 ({ commit }, payload) {
+	// 	try {
+	// 		// const slug = payload
+	// 		console.log('fetchPageBySlug vuex action: ', payload)
+	// 		const { data } = await axios.get(`/api/pages/${payload}`)
+	// 		console.log('data: ', data)
+	// 		commit('SET_PAGE', data.page)
+	// 	} catch (error) {
+	// 		console.log('error: ', error)
+	// 		throw error
+	// 	}
+	// },
+	async createPage ({ commit }, form) {
         try {
-			console.log('payload: ', payload)
-            const config = {
-                headers: { 'content-type': 'multipart/form-data' }
-            }
+			console.log('createPage action: ', form)
 
-            let formData = new FormData();
-            formData.append('form', JSON.stringify(payload.newPage))
-            console.log('formData: ', formData)
-
-            const { data } = await axios.post('/api/pages', formData, config)
+        	const { data } = await form.submit('post', '/api/pages', {
+                transformRequest: [
+                    function(data, headers) {
+                        return objectToFormData(data)
+                    }
+                ]
+            })
             console.log('data: ', data)
             commit('SET_PAGE', data.newPage)
         } catch (error) {
@@ -81,13 +106,23 @@ export const actions = {
             throw error
         }
     },
-	async updatePage ({ commit }, payload) {
+	async updatePage ({ commit }, form) {
 		try {
-			console.log('updatedPage vuex action: ', payload)
-			const updatedPage = payload
-			const { data } = await axios.put(`/api/pages/${updatedPage.slug}`, { updatedPage })
+			console.log('updatedPage vuex action: ', form)
+			const updatedPage = form
+			console.log('updatedPage: ', updatedPage)
+
+			const { data } = await form.submit('post', `/api/pages/${updatedPage.id}`, {
+                transformRequest: [
+                    function(data, headers) {
+                    	data['_method'] = 'PUT'
+                        return objectToFormData(data)
+                    }
+                ]
+            })
+
 			console.log('data: ', data)
-			commit('SET_PAGE', data.page)
+			commit('SET_PAGE', data.updatedPage)
 		} catch (error) {
 			console.log('error: ', error)
 			throw error
@@ -96,10 +131,12 @@ export const actions = {
 	async deletePage ({ commit }, payload) {
         try {
             const { pageId } = payload
+            console.log('pageId: ', pageId)
             const { data } = await axios.delete(`/api/pages/${pageId}`)
-            console.log('data: ', data)
-            commit('DELETE_PAGE', { pageSlug: data.page.slug })
+            console.log('data2: ', data)
+            commit('DELETE_PAGE', { pageId })
         } catch (error) {
+			console.log('error: ', error)
             throw error
         }
     }

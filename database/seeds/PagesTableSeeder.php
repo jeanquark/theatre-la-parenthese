@@ -16,7 +16,7 @@ class PagesTableSeeder extends Seeder
 
         $pages = [
             [
-                'title' => 'Accueil',
+                'name' => 'Accueil',
                 'slug' => 'accueil',
                 'content' => '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent ac pretium ligula, a condimentum nulla. Pellentesque feugiat laoreet justo, ut tempor sem varius eget. In tellus velit, posuere eu bibendum ac, commodo ut tortor. Sed finibus ligula ac gravida venenatis. Proin nisl odio, lobortis feugiat turpis ut, tristique accumsan risus. Nunc convallis dolor id sodales gravida. Ut aliquam odio et sem suscipit convallis. Duis feugiat sagittis nisl quis accumsan.</p>
                 <p class="text-center"><img src="https://picsum.photos/id/237/600/300" /></p>
@@ -25,7 +25,7 @@ class PagesTableSeeder extends Seeder
 
             ],
             [
-                'title' => 'Qui sommes-nous',
+                'name' => 'Qui sommes-nous',
                 'slug' => 'qui-sommes-nous',
                 'content' => '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent ac pretium ligula, a condimentum nulla. Pellentesque feugiat laoreet justo, ut tempor sem varius eget. In tellus velit, posuere eu bibendum ac, commodo ut tortor. Sed finibus ligula ac gravida venenatis. Proin nisl odio, lobortis feugiat turpis ut, tristique accumsan risus. Nunc convallis dolor id sodales gravida. Ut aliquam odio et sem suscipit convallis. Duis feugiat sagittis nisl quis accumsan.</p>
                 <p class="text-center"><img src="https://picsum.photos/id/237/600/300" /></p>

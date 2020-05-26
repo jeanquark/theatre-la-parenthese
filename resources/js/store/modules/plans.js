@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import axios from 'axios'
+import { objectToFormData } from 'object-to-formdata'
 
 // state
 export const state = {
@@ -84,7 +85,24 @@ export const actions = {
             throw error
         }
     },
-    async createPlan ({ commit }, payload) {
+    async createPlan ({ commit }, form) {
+        try {
+            const { data } = await form.submit('post', '/api/plans')
+            // const { data } = await form.submit('post', '/api/plans', {
+            //     transformRequest: [
+            //         function(data, headers) {
+            //             return objectToFormData(data)
+            //             // return data
+            //         }
+            //     ]
+            // })
+            console.log('data: ', data)
+        } catch (error) {
+            console.log('error: ', error)
+            throw error
+        }
+    },
+    async createPlan2 ({ commit }, payload) {
         try {
             const { newPlanSVG, newPlan, newPerformance, newTablesArray } = payload
             const abc = await axios.post('/api/plans', { newPlanSVG, newPlan, newPerformance, newTablesArray })
@@ -94,7 +112,25 @@ export const actions = {
             throw error
         }
     },
-    async updatePlan ({ commit }, payload) {
+    async updatePlan ({ commit }, form) {
+        try {
+            const { planSvgId } = form
+            const { data } = await form.submit('put', `/api/plans/${planSvgId}`)
+            // const { data } = await form.submit('post', `/api/plans/${planSvgId}`, {
+            //     transformRequest: [
+            //         function(data, headers) {
+            //         	data['_method'] = 'PUT'
+            //             // return objectToFormData(data)
+            //             // return data
+            //         }
+            //     ]
+            // })
+            console.log('data: ', data)
+        } catch (error) {
+            throw error
+        }
+    },
+    async updatePlan2 ({ commit }, payload) {
         try {
             console.log('Call to updatePlan action: ', payload)
             const { planSvgId, newTablesArray, deletedTablesArray, newPlanSVG } = payload

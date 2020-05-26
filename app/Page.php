@@ -8,5 +8,5 @@ class Page extends Model
 {
     protected $table = 'pages';
 
-    protected $fillable = ['title', 'content'];
+    protected $fillable = ['name', 'slug', 'is_published', 'content'];
 }

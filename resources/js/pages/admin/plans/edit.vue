@@ -13,13 +13,14 @@
         </h2>
         <!-- newTablesSVGArray: {{ newTablesSVGArray }}<br /><br /> -->
         <!-- newTablesArray: {{ newTablesArray }}<br /><br /> -->
+        <!-- abc: {{ abc }}<br /><br /> -->
         <!-- deletedTablesArray: {{ deletedTablesArray }}<br /><br /> -->
-        <!-- plan: {{ plan }}<br /><br /> -->
+        <!-- plan.plan_seats: {{ plan.plan_seats }}<br /><br /> -->
         <!-- selectedTable: {{ selectedTable }}<br /><br /> -->
         <!-- newTable: {{ newTable }}<br /><br /> -->
-        <h4 class="text-center" v-if="plan && plan.performance">{{ plan.performance.date | moment('dddd Do MMM YYYY HH:mm') }}</h4>
+
+        <h4 class="text-center" v-if="plan && plan.performance && plan.performance.date">{{ plan.performance.date | moment('dddd Do MMM YYYY HH:mm') }}</h4>
         <b-row class="justify-content-center mt-5" v-if="loadingSvg">
-            <!-- <font-awesome-icon icon="spinner" size="lg" spin /> -->
             <b-spinner variant="primary" label="Spinning"></b-spinner>
         </b-row>
 
@@ -32,23 +33,39 @@
         </b-row>
 
         <b-row class="justify-content-center my-3" v-if="!loadingSvg && svgFile">
-            <b-col cols="12" md="8" v-if="plan && plan.svg_id" @click="clickOnTablesPlan($event)">
+            <b-col cols="12" md="8" style="" v-if="plan && plan.svg_id" @click="clickOnTablesPlan($event)">
                 <div ref="svgFile" v-html="svgFile" class="primary-border"></div>
             </b-col>
 
             <b-col cols="8" md="8" class="my-4">
-                <h4 class="text-center" v-if="selectedTable">Table sélectionnée: {{ selectedTable.table_number }}</h4>
-                <!-- selectedTable: {{ selectedTable }}<br /> -->
-                <!-- selectedTable.svg_model: {{ selectedTable.svg_model }} -->
+                <div v-if="selectedTable">
+                    <h4 class="text-center">Table sélectionnée: {{ selectedTable.table_number }}</h4>
+                </div>
                 <b-row class="justify-content-center">
-                    <b-col cols="12" sm="6" md="4">
+                    <b-col cols="12" sm="6" md="6">
                         <svg-vue id="model_table_round_4_seats" icon="models/model_table_round_4_seats" v-show="selectedTable && selectedTable.svg_model === 'table_round_4_seats'"></svg-vue>
                         <svg-vue id="model_table_round_6_seats" icon="models/model_table_round_6_seats" v-show="selectedTable && selectedTable.svg_model === 'table_round_6_seats'"></svg-vue>
                         <svg-vue id="model_table_round_8_seats" icon="models/model_table_round_8_seats" v-show="selectedTable && selectedTable.svg_model === 'table_round_8_seats'"></svg-vue>
                     </b-col>
-                    <b-col cols="12" sm="6" md="4" align-self="center" v-if="selectedTable">
+                    <b-col cols="12" sm="6" md="6" align-self="center" v-if="selectedTable">
                         En <b>noir</b>: siège libre, en <span style="color: #ff0000"><b>rouge</b></span
-                        >: siège réservé.
+                        >: siège réservé.<br />
+                        <ul>
+                            <li v-for="(seat, index) in selectedTable.seats" :key="index">Place n°{{ seat['seat_number'] }}, prix: {{ seat['price'] }}</li>
+                        </ul>
+
+                        <b-row no-gutters v-for="(seat, index) in selectedTable.seats" :key="index">
+                            <b-col cols="6" class="px-2">
+                                <b-form-group :label="`N° siège`">
+                                    <b-form-input v-model="seat['seat_number']"></b-form-input>
+                                </b-form-group>
+                            </b-col>
+                            <b-col cols="6" class="px-2">
+                                <b-form-group :label="`Prix du siège`">
+                                    <b-form-input type="number" v-model="seat['price']"></b-form-input>
+                                </b-form-group>
+                            </b-col>
+                        </b-row>
                     </b-col>
                 </b-row>
             </b-col>
@@ -65,34 +82,22 @@
             ><br />
         </b-row>
 
-        <b-modal
-            id="table-number"
-            ref="modal"
-            @ok="addTable()"
-            title="Définir un numéro pour la nouvelle table"
-        >
-            <b-form-group
-                label="Numéro de table"
-                label-for="table-number-input"
-                invalid-feedback="Name is required"
-            >
-                <b-form-input
-                    id="table-number-input"
-                    required
-                    v-model="newTable.table_number"
-                ></b-form-input>
-            </b-form-group>
-        </b-modal>
+        <table-details-modal :newTable="newTable" @addTable="addTable" />
     </b-container>
 </template>
 
 <script>
+import Form from 'vform'
 import axios from 'axios'
 import SVG from 'svg.js'
 import 'svg.draggable.js'
 
+import TableDetailsModal from '~/components/TableDetailsModal'
+
 export default {
-    components: {},
+    components: {
+        TableDetailsModal
+    },
     async created() {},
     async mounted() {
         try {
@@ -106,19 +111,8 @@ export default {
                 await this.$store.dispatch('tables/fetchTables')
             }
 
-            // if (!this.$store.getters['plans/plans'][planId]) {
-                await this.$store.dispatch('plans/fetchPlanById', { planId })
-            // this.svgFile = svgPlan
-            // }
-                // console.log('this.plan', this.plan)
-            // // const fileContent = ''
-            // this.svgFile = this.$store.getters['plans/plans'][planId]['svg_plan']
+            await this.$store.dispatch('plans/fetchPlanById', { planId })
             this.svgFile = this.plan['svg_plan']
-
-            // const { data } = await axios.post(`/api/plans/svg`, { planSVG })
-            // console.log('data: ', data)
-            // this.svgFile = data.svgPlan
-
             const shift = 10
 
             SVG.select('.table').each(function(i) {
@@ -143,6 +137,7 @@ export default {
     },
     data() {
         return {
+            form: new Form({}),
             loadingSvg: true,
             planId: '',
             selectedTable: null,
@@ -178,11 +173,8 @@ export default {
         },
         async clickOnTablesPlan(event) {
             try {
-                // console.log('clickOnTablesPlan: ', event)
                 const tableId = event.target.id
-                // console.log('tableId: ', tableId)
                 const tableSvgId = tableId.substring(0, tableId.indexOf('_'))
-                // console.log('tableSvgId: ', tableSvgId)
 
                 if (this.selectedTable && this.selectedTable.svg_id) {
                     SVG.get(`${this.selectedTable.svg_id}_table`).attr('stroke', null)
@@ -195,7 +187,6 @@ export default {
                         .select('circle')
                         .first()
                         .attr('r')
-                    // console.log('shift: ', shift)
 
                     tableGroup.draggable({
                         minX: -(SVG('tables_plan').viewbox().width / 2 - shift),
@@ -205,16 +196,26 @@ export default {
                     })
 
                     const newTable = this.newTablesArray.find(table => table.svg_id === tableSvgId)
-                    if (newTable) { // If selectedTable is a newly added table
+                    if (newTable) {
+                        // If selectedTable is a newly added table
                         this.selectedTable = newTable
                         const tableModel = SVG.select(`#model_${this.selectedTable.svg_model}`).first()
                         // console.log('tableModel: ', tableModel)
                         for (let i = 1; i <= parseInt(this.selectedTable.total_seats); i++) {
-                        	const seatNumber = ('0' + i).slice(-2)
+                            const seatNumber = ('0' + i).slice(-2)
                             // console.log('seatNumber: ', seatNumber)
-                        	tableModel.select(`#seat${seatNumber}_group`).first().fill('#000000')
-                        	tableModel.select(`#seat${seatNumber}_group`).first().removeClass('seat')
-                        	tableModel.select(`#seat${seatNumber}_text`).first().plain('')
+                            tableModel
+                                .select(`#seat${seatNumber}_group`)
+                                .first()
+                                .fill('#000000')
+                            tableModel
+                                .select(`#seat${seatNumber}_group`)
+                                .first()
+                                .removeClass('seat')
+                            tableModel
+                                .select(`#seat${seatNumber}_text`)
+                                .first()
+                                .plain('')
                         }
                     } else {
                         // Existing table, show each seat number & reservation status
@@ -227,13 +228,10 @@ export default {
 
                         if (SVG.supported && tableModel && this.selectedTable.seats) {
                             this.selectedTable.seats.forEach(seat => {
-                                // console.log('seat: ', seat)
                                 const seatSvg = seat.svg_id.match(/seat\d*/gm)[0]
-                                // console.log('seatSvg: ', seatSvg)
 
                                 // Display seat number
                                 const seatText = tableModel.select(`#${seatSvg}_text`).first()
-                                // console.log('seatText: ', seatText)
                                 seatText.plain(seat.seat_number)
 
                                 const seatColor = tableModel.select(`#${seatSvg}_group`).first()
@@ -263,14 +261,17 @@ export default {
                 this.$noty.error("La table n'a pas pu être trouvée dans la base de données.")
             }
         },
-        async addTableModal (table) {
-            this.newTable = { ...table }
-            // const shift = table.r / 2
-            
+        async addTableModal(table) {
+            console.log('addTableModal: ', table)
+
+            // Parse new table data
+            this.newTable = { ...table, seats: [] }
+            for (let i = 0; i < table.total_seats; i++) {
+                this.newTable['seats'].push({ seat_number: this.formattedTableNumber(i + 1), price: 3000 })
+            }
 
             // Define table number
             let tableNumber = '01'
-
             const tablesPlan = SVG('tables_plan').svg()
             const existingTablesNumbers = tablesPlan.match(/data-table-number="\d+"/g)
             const array = []
@@ -282,7 +283,9 @@ export default {
                 }, tableNumber)
             }
             this.newTable.table_number = tableNumber
-            this.$bvModal.show('table-number')
+
+            // this.$bvModal.show('table-number')
+            this.$bvModal.show('table-details')
         },
         async addTable() {
             // Generate random SVG ID
@@ -350,34 +353,34 @@ export default {
         async updatePlan() {
             try {
                 console.log('updatePlan')
-                this.$store.commit('loading/SET_LOADING', true)
+                this.$store.commit('loading/SET_LOADING', true, { root: true })
 
                 // Remove selection ring
                 if (this.selectedTable && this.selectedTable.svg_id) {
                     SVG.get(`${this.selectedTable.svg_id}_table`).attr('stroke', null)
                 }
-                // return
 
                 const planSvgId = this.plan.svg_id
                 const newPlanSVG = SVG('tables_plan')
                     .svg()
                     .replace('xmlns:svgjs="http://svgjs.com/svgjs"', '')
 
-                const newTablesArray = this.newTablesArray
-                const deletedTablesArray = this.deletedTablesArray
-                const newTablesSVGArray = this.newTablesSVGArray
-                console.log('planSvgId: ', planSvgId)
-                // console.log('newPlanSVG: ', newPlanSVG)
-                console.log('newTablesSVGArray: ', newTablesSVGArray)
-                console.log('tablesArray: ', newTablesArray)
-                await this.$store.dispatch('plans/updatePlan', { planSvgId, newTablesArray, deletedTablesArray, newPlanSVG })
+                this.form['plan_seats'] = this.plan.plan_seats
+                this.form['planSvgId'] = planSvgId
+                this.form['newPlanSVG'] = newPlanSVG
+                this.form['newTablesArray'] = this.newTablesArray
+                this.form['deletedTablesArray'] = this.deletedTablesArray
+                console.log('form: ', this.form)
+                // return
+
+                await this.$store.dispatch('plans/updatePlan', this.form)
                 this.$store.commit('loading/SET_LOADING', false, { root: true })
                 this.$noty.success('Le plan de salle a été mis à jour avec succès!')
-                // this.$router.push('/admin/plans')
                 setTimeout(() => {
                     window.location.href = '../../plans'
                 }, 1000)
             } catch (error) {
+                console.log('error: ', error)
                 this.$store.commit('loading/SET_LOADING', false, { root: true })
                 console.log('error: ', error)
                 this.$noty.error("Une erreur est apparue et le plan de salle n'a pas pu être mis à jour. Vous aller être redirigé vers la page des plans.")
@@ -393,7 +396,12 @@ export default {
                         return
                     }
                 }
+                // Delete from newTables array if table is new
+                this.newTablesArray = this.newTablesArray.filter(table => table.svg_id !== this.selectedTable.svg_id)
+
+                // Add to deleteTablesArray if table is old
                 this.deletedTablesArray.push(this.selectedTable)
+
                 SVG.get(`${this.selectedTable.svg_id}_group`).remove()
                 this.selectedTable = null
                 this.$noty.success('La table a été supprimée avec succès!')
@@ -404,10 +412,6 @@ export default {
                     this.$noty.error("Nous sommes désolés. Une erreur est survenue et la table n'a pas pu être supprimée.")
                 }
             }
-        },
-        reloadPage() {
-            window.location.reload()
-            this.$noty.success('Le plan de salle a été mis à jour avec succès.')
         }
     }
 }

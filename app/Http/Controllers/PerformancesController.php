@@ -9,6 +9,7 @@ use View;
 use App\Http\Requests\StorePerformance;
 use App\Http\Requests\EditPerformance;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 
 class PerformancesController extends Controller
@@ -31,16 +32,16 @@ class PerformancesController extends Controller
         return response()->json($performances, 200);
     }
 
-    public function getPerformance(Request $request, $id)
-    {
-        $performance = Performance::with(['plan', 'show'])->find($id);
-        // $performance['show'] = $performance->show;
+    // public function getPerformance(Request $request, $id)
+    // {
+    //     $performance = Performance::with(['plan', 'show'])->find($id);
+    //     // $performance['show'] = $performance->show;
 
-        return response()->json([
-            'success' => true,
-            'performance' => $performance,
-        ], 200);
-    }
+    //     return response()->json([
+    //         'success' => true,
+    //         'performance' => $performance,
+    //     ], 200);
+    // }
 
     public function getPerformanceById(Request $request, $id)
     {
@@ -95,17 +96,22 @@ class PerformancesController extends Controller
         ], 201);
     }
 
-    protected function updatePerformance(Request $request, $id) {
+    protected function updatePerformance(Request $request, $id)
+    {
+        $validatedData = $request->validate([
+            'name' => ['required', Rule::unique('performances')->ignore($id)],
+        ]);
 
-        $updatedPerformance = json_decode($request->form);
+        // $updatedPerformance = json_decode($request->form);
         $performance = Performance::find($id);
 
         $performance->updateOrInsert(
             ['id' => $id],
             [
-                'name' => $updatedPerformance->name,
-                'slug' => str_slug($updatedPerformance->slug),
-                'date' => $updatedPerformance->date,
+                'name' => $request->name,
+                'slug' => str_slug($request->name),
+                'location' => $request->location,
+                'date' => $request->date,
             ]
         );
 
@@ -116,9 +122,12 @@ class PerformancesController extends Controller
         // }
         // $performance->performances()->sync($performanceIdArray);
 
+        $updatedPerformance = Performance::find($id);
+
         return response()->json([
             'success' => true,
             'performance' => $performance,
+            'updatedPerformance' => $updatedPerformance
         ], 201);
     }
 

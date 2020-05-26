@@ -36,7 +36,7 @@
         </div>
 
         <!-- <Footer class="footer" /> -->
-        <footer class="footer">theatre-la-parenthese.ch @{{ new Date().getFullYear() }}</footer>
+        <footer class="footer">theatre-la-parenthese.ch &copy;{{ new Date().getFullYear() }}</footer>
     </div>
 </template>
 

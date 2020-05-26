@@ -77,10 +77,16 @@ export const mutations = {
     // },
     UPDATE_PERFORMANCE (state, payload) {
         console.log('Update performance mutation: ', payload)
-        const performanceId = parseInt(payload.id)
-        const index = state.performances.findIndex(performance => performance.id === performanceId)
-        console.log('index: ', index)
-        state.performances[index] = payload
+
+        state.performances = Object.assign({}, state.performances, {
+            [payload.id]: payload
+        })
+
+        // return
+        // const performanceId = parseInt(payload.id)
+        // const index = state.performances.findIndex(performance => performance.id === performanceId)
+        // console.log('index: ', index)
+        // state.performances[index] = payload.
     },
     DELETE_PERFORMANCE (state, payload) {
         const performanceId = parseInt(payload)
@@ -165,23 +171,27 @@ export const actions = {
             throw error
         }
     },
-    async updatePerformance ({ commit }, payload) {
+    async updatePerformance ({ commit }, form) {
         try {
-            const config = {
-                headers: { 'content-type': 'multipart/form-data' }
-            }
-
-            let formData = new FormData();
-            formData.append('new_image', payload.new_image)
-            // console.log('this.performance: ', this.performance)
-            formData.append('form', JSON.stringify(payload.performance))
-            console.log('formData: ', formData)
-
-            formData.append('_method', 'PUT')
-
-            const { data } = await axios.post(`/api/performances/${payload.performance.id}`, formData, config)
+            // const { id } = form
+            const { data } = await form.submit('put', `/api/performances/${form.id}`)
             console.log('data: ', data)
-            commit('UPDATE_PERFORMANCE', data.performance)
+
+            // const config = {
+            //     headers: { 'content-type': 'multipart/form-data' }
+            // }
+
+            // let formData = new FormData();
+            // formData.append('new_image', payload.new_image)
+            // // console.log('this.performance: ', this.performance)
+            // formData.append('form', JSON.stringify(payload.performance))
+            // console.log('formData: ', formData)
+
+            // formData.append('_method', 'PUT')
+
+            // const { data } = await axios.post(`/api/performances/${payload.performance.id}`, formData, config)
+            // console.log('data: ', data)
+            commit('UPDATE_PERFORMANCE', data.updatedPerformance)
         } catch (error) {
             console.log('error from vuex: ', error)
             throw error

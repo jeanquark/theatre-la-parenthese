@@ -14,7 +14,7 @@
 			</b-breadcrumb-item>
             <b-breadcrumb-item active>Montrer</b-breadcrumb-item>
         </b-breadcrumb>
-		<h2 class="text-center mb-3">Contenu de la page <span class="primary-color" v-if="page">"{{ page.title }}"</span>:</h2>
+		<h2 class="text-center mb-3">Contenu de la page <span class="primary-color" v-if="page">"{{ page.name }}"</span></h2>
 
 		<!-- pages: {{ pages }}<br /><br /> -->
 		<!-- page: {{ page }}<br /><br /> -->

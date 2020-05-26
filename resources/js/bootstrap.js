@@ -61,19 +61,19 @@ function errorResponseHandler(error) {
 
     // if has response show the error 
     if (error.response) {
-        console.log('error.response from bootstrap.js: ', error.response)
-        console.log('error.response.status from bootstrap.js: ', error.response.status)
+        // console.log('error.response from bootstrap.js: ', error.response)
+        // console.log('error.response.status from bootstrap.js: ', error.response.status)
         // console.log('store.getters[auth/token]: ', store.getters['auth/token'])
         
 
         // If token has expired, logout
         if (error.response.status === 401 || error.response.status === 403) {
             const token = store.getters['auth/token']
-            console.log('token: ', token)
+            // console.log('token: ', token)
             // const decoded = jwt_decode(token)
             // console.log('decoded: ', decoded)
             const { exp } = jwt_decode(token)
-            console.log('exp: ', exp)
+            // console.log('exp: ', exp)
             if (Date.now() >= exp * 1000) {
                 // store.dispatch('auth/logout')
                 // store.commit('auth/SET_USER', null)

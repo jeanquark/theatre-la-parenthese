@@ -7,66 +7,85 @@
             </b-breadcrumb-item>
             <b-breadcrumb-item active>Editer</b-breadcrumb-item>
         </b-breadcrumb>
-        <h2 class="text-center mb-3">Editer le contenu de la page <span class="primary-color" v-if="page">"{{ page.title }}"</span>:</h2>
+        <h2 class="text-center mb-3">
+            Editer la page <span class="primary-color" v-if="page">"{{ page.name }}"</span>
+        </h2>
 
         <!-- pages: {{ pages }}<br /><br /> -->
-		<!-- page: {{ page }}<br /><br /> -->
+        <!-- page: {{ page }}<br /><br /> -->
         <!-- updatedPage: {{ updatedPage }}<br /><br /> -->
+        <!-- showHTML: {{ showHTML }}<br /><br /> -->
         <!-- editorData: {{ editorData }}<br /><br /> -->
         <!-- <ckeditor v-model="editorData" :config="editorConfig"></ckeditor> -->
-        <ckeditor :config="editorConfig" v-if="updatedPage && updatedPage['content']" class="" v-model="updatedPage['content']"></ckeditor>
+        <b-form @submit.prevent="updatePage">
+            <b-col cols="12">
+                <b-form-group label="Titre:" label-for="name">
+                    <b-form-input id="name" name="name" :class="{ 'is-invalid': form.errors.has('name') }" v-model="form.name"></b-form-input>
+                    <has-error :form="form" field="name" />
+                </b-form-group>
+            </b-col>
+
+            <b-col cols="12" class="my-2">
+                <b-form-checkbox id="is_published" name="is_published" value="1" unchecked-value="0" v-model="form.is_published">
+                    Publié?
+                </b-form-checkbox>
+            </b-col>
+
+            <b-row align-v="center" class="justify-content-start my-3 px-3">
+                <b-col cols="12" v-if="page">
+                    <text-editor @toggleShowHTML="toggleShowHTML" :formContent="page.content" />
+                </b-col>
+            </b-row>
+        </b-form>
+
         <b-row class="justify-content-center my-2">
             <b-button variant="primary" :disabled="loading" @click="updatePage">
                 <b-spinner small type="grow" v-if="loading"></b-spinner>
                 Editer le contenu
             </b-button>
         </b-row>
+        <b-row class="justify-content-center">
+            <b-alert variant="danger" dismissible :show="form.errors.any()">Erreur lors de l'envoi. Veuillez vérifier la validité des champs.</b-alert>
+        </b-row>
     </b-container>
 </template>
 
 <script>
-import axios from 'axios'
-import CKEditor from 'ckeditor4-vue'
+import Form from 'vform'
+// import CKEditor from 'ckeditor4-vue'
+import TextEditor from '~/components/TextEditor'
 export default {
     components: {
         // Use the <ckeditor> component in this view.
-        ckeditor: CKEditor.component
+        // ckeditor: CKEditor.component,
+        TextEditor
     },
     async created() {
-        const pageSlug = this.$route.params.id
-        this.pageSlug = pageSlug
-        console.log('pageSlug: ', pageSlug)
-
-        if (!this.$store.getters['pages/pages'][pageSlug]) {
-            await this.$store.dispatch('pages/fetchPageBySlug', pageSlug)
+        if (!this.$store.getters['pages/pages'][this.$route.params.id]) {
+            await this.$store.dispatch('pages/fetchPageById', { pageId: this.$route.params.id })
         }
+
+        // console.log('this.page: ', this.page)
+        // console.log('this.form: ', this.form)
+        this.form.fill(this.page)
     },
     mounted() {
-        this.updatedPage = {
-            slug: this.pageSlug,
-            title: this.page ? this.page['title'] : '',
-            content: this.page ? this.page['content'] : ''
-        }
     },
     data() {
         return {
-            editorData: '<p>Content of the editor.</p>',
-            editorConfig: {
-                // extraPlugins: ['justify', 'image', 'image2'],
-                extraPlugins: ['justify', 'image2'],
-                // filebrowserBrowseUrl: '/browser/browse.php',
-                // filebrowserUploadUrl: '/uploader/upload.php',
-                // filebrowserBrowseUrl: '/js/ckfinder/ckfinder.html',
-                // filebrowserBrowseUrl: '/ckfinder/browser?token=123',
-                filebrowserBrowseUrl: '/ckfinder/browser',
-                // filebrowserBrowseUrl: '/images',
-                // filebrowserUploadUrl: '/js/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files'
-                filebrowserUploadUrl: '/userfiles'
-                // filebrowserImageUploadUrl: '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images'
-                // allowedContent: 'h1 h2 h3 h4 h5 h6 p blockquote strong em a[!href] img(left,right)[!src,alt,width,height]'
-                // extraAllowedContent: 'img'
-            },
-            updatedPage: {},
+            // editorData: '<p>Content of the editor.</p>',
+            // editorConfig: {
+            //     extraPlugins: ['justify', 'image2'],
+            //     filebrowserBrowseUrl: '/ckfinder/browser',
+            //     filebrowserUploadUrl: '/userfiles'
+            // },
+            showHTML: false,
+            form: new Form({
+                id: '',
+                name: '',
+                content: '',
+                is_published: false
+            })
         }
     },
     computed: {
@@ -76,53 +95,38 @@ export default {
         pages() {
             return this.$store.getters['pages/pages']
         },
-        // page: {
-        //     get: function() {
-        //         return JSON.parse(JSON.stringify(this.$store.getters['pages/pages'][this.pageSlug]))
-        //     }
-        // },
-        // page () {
-        //     if (this.$store.getters['pages/pages'][this.pageSlug]) {
-        //         return JSON.parse(JSON.stringify(this.$store.getters['pages/pages'][this.pageSlug]))
-        //     }
-        // },
-        page () {
-            return this.$store.getters['pages/pages'][this.pageSlug]
-        },
-        // updatedPage: {
-        //     get: function() {
-        //         // if (this.$store.getters['pages/pages'][this.pageSlug]) {
-        //         //     return JSON.parse(JSON.stringify(this.$store.getters['pages/pages'][this.pageSlug]))
-        //         // }
-        //         return {...this.$store.getters['pages/pages'][this.pageSlug]}
-        //     },
-        //     set: function(newValue) {
-        //         console.log('newValue: ', newValue)
-        //     }
-        // },
-        // updatedPage () {
-        //     // return { ...this.$store.getters['pages/pages'][this.pageSlug] }
-        //     if (this.$store.getters['pages/pages'][this.pageSlug]) {
-        //         return JSON.parse(JSON.stringify(this.$store.getters['pages/pages'][this.pageSlug]))
-        //     }
-        // },
-        // updatedPage () {
-        //     return Object.assign({}, this.$store.getters['pages/pages'][this.pageSlug])
-        // }
+        page() {
+            return this.$store.getters['pages/pages'][this.$route.params.id]
+        }
     },
     methods: {
+        toggleShowHTML (value) {
+            this.showHTML = value
+        },
         async updatePage() {
             try {
-                console.log('updatePage: ', this.updatedPage)
+                console.log('updatePage: ', this.form)
                 this.$store.commit('loading/SET_LOADING', true)
-                await this.$store.dispatch('pages/updatePage', this.updatedPage)
+
+                let content
+                if (!this.showHTML) {
+                    content = document.getElementById('textBox').innerHTML
+                } else {
+                    content = document.getElementById('textBox').innerText
+                }
+                console.log('content: ', content)
+
+                this.form['content'] = content
+                console.log('this.form: ', this.form)
+
+                await this.$store.dispatch('pages/updatePage', this.form)
                 this.$store.commit('loading/SET_LOADING', false)
-                this.$noty.success('Contenu mis à jour avec succès.')
+                this.$noty.success('Page mise à jour avec succès!')
                 this.$router.push('/admin/pages')
             } catch (error) {
-                console.log('error: ', error)
                 this.$store.commit('loading/SET_LOADING', false)
-                this.$noty.error("Une erreur est survenue et le contenu n'a pas pu être mis à jour.")
+                console.log('error: ', error)
+                this.$noty.error("Une erreur est survenue et la page n'a pas pu être mise à jour.")
             }
         }
     }
@@ -130,8 +134,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-    @import './resources/sass/_variables.scss';
-	.primary-color {
-		color: $primary;
-	}
+@import './resources/sass/_variables.scss';
+.primary-color {
+    color: $primary;
+}
 </style>

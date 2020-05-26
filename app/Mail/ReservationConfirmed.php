@@ -36,9 +36,8 @@ class ReservationConfirmed extends Mailable
         $subject = "Théâtre La Parenthèse - Vos réservations";
         // $subject = {{ config('app.name') }} . ' - Vos réservations';
 
-        return $this->view('emails.reservations.confirmation')
-                ->from($from)
-                ->subject($subject);
+        // return $this->view('emails.reservations.confirmation')
+        return $this->from($from)->subject($subject)->view('emails.reservations.confirmation');
 
         // return $this->markdown('emails.reservations.confirm')
         //     ->subject($subject);

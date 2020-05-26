@@ -2,18 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StorePlan;
 use App\Performance;
 use App\Plan;
-use App\PlanTable;
 use App\PlanSeat;
-use View;
-use App\Http\Requests\StorePlan;
+use App\PlanTable;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Str;
-use File;
-
 
 class PlansController extends Controller
 {
@@ -27,7 +24,6 @@ class PlansController extends Controller
         // $this->middleware('guest');
     }
 
-
     public function getAll()
     {
         $plans = Plan::with(['performance', 'performance.show', 'plan_tables', 'plan_seats'])->get();
@@ -35,7 +31,7 @@ class PlansController extends Controller
         return response()->json([
             'success' => true,
             'plans' => $plans,
-            ], 200);
+        ], 200);
     }
 
     public function getPlan(Request $request, $id)
@@ -46,19 +42,26 @@ class PlansController extends Controller
         return response()->json([
             'success' => true,
             'plan' => $plan,
-            'svgPlan' => $svgPlan
-            ], 200);
+            'svgPlan' => $svgPlan,
+        ], 200);
     }
 
-    protected function create(StorePlan $request)
-    {   
+    protected function createPlan(Request $request)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|unique:plans',
+            'newPerformance.show_id' => 'required',
+            'newPerformance.name' => 'required'
+        ]);
+
         // return response()->json([
         //     'status' => 'success',
-        //     '$request->newPlanSVG' => $request->newPlanSVG,
-        //     '$request->newPlan' => $request->newPlan,
+        //     'request' => $request,
+        //     // '$request->newPlanSVG' => $request->newPlanSVG,
+        //     // '$request->newPlan' => $request->newPlan,
         //     '$request->newPerformance' => $request->newPerformance,
         //     '$request->newTablesArray' => $request->newTablesArray,
-        //     ], 200);
+        // ], 200);
 
         // 1) Save new performance
         $newPerformance = new Performance;
@@ -73,9 +76,12 @@ class PlansController extends Controller
         // 2) Save new plan
         $newPlan = new Plan;
         $newPlan->performance_id = $newPerformance->id;
-        $newPlan->svg_id = $request->newPlan['svg_id'];
-        $newPlan->name = $request->newPlan['name'];
-        $newPlan->slug = Str::slug($request->newPlan['name'], '-');
+        // $newPlan->svg_id = $request->newPlan['svg_id'];
+        $newPlan->svg_id = $request->svg_id;
+        // $newPlan->name = $request->newPlan['name'];
+        $newPlan->name = $request->name;
+        // $newPlan->slug = Str::slug($request->newPlan['name'], '-');
+        $newPlan->slug = Str::slug($request->name, '-');
 
         $newPlan->save();
 
@@ -101,13 +107,14 @@ class PlansController extends Controller
 
                 // Update plan_seats table
                 if ($table->id) {
-                    for ($j = 1; $j <= $newTablesArray[$i]['total_seats']; $j++) {
+                    for ($j = 0; $j < $newTablesArray[$i]['total_seats']; $j++) {
 
                         $newTable = new PlanSeat;
 
                         $newTable->plan_table_id = $table->id;
-                        $newTable->svg_id = 'table_' . $newTablesArray[$i]['svg_id'] . '_seat' . $this->formattedTableNumber($j);
-                        $newTable->seat_number = $this->formattedTableNumber($j);
+                        $newTable->svg_id = 'table_' . $newTablesArray[$i]['svg_id'] . '_seat' . $this->formattedTableNumber($j + 1);
+                        $newTable->seat_number = $newTablesArray[$i]['seats'][$j]['seat_number'];
+                        $newTable->price = $newTablesArray[$i]['seats'][$j]['price'];
 
                         $newTable->save();
                     }
@@ -127,34 +134,35 @@ class PlansController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Table created successfully.',
-            'newPlan' => $newPlan
-            ], 201);
+            'newPlan' => $newPlan,
+        ], 201);
     }
 
-
-    protected function update(Request $request)
+    protected function updatePlan(Request $request)
     {
-        // return response()->json([
-        //     'status' => 'success',
-        //     'message' => 'Table updated successfully.',
-        //     'newPlanSVG' => $request->newPlanSVG,
-        //     'newTablesArray' => $request->newTablesArray,
-        //     'deletedTablesArray' => $request->deletedTablesArray
-        //     ], 200);
+        $validatedData = $request->validate([]);
 
-        // // 1) Save new plan as SVG image
-        // if ($request->newTablesSVGArray) {
-        //     Storage::disk('images')->put('svg/plans/' . $request->newTablesSVGArray[$i]['id'] . '.svg', $request->newTablesSVGArray[$i]['svg']);
-        // }
-        
+        // 1) Update seat info
+        $planSeatsArray = $request->plan_seats;
+        for ($i = 0; $i < count($planSeatsArray); $i++) {
+            PlanSeat::updateOrInsert(
+                [
+                    'id' => $planSeatsArray[$i]['id']
+                ],
+                [
+                    'seat_number' => $planSeatsArray[$i]['seat_number'],
+                    'price' => $planSeatsArray[$i]['price']
+                ]
+            );
+        }
 
-        // 1) Save new tables and seats in database
+        // 2) Save new tables and seats in database
         $newTablesArray = $request->newTablesArray;
         if ($newTablesArray) {
             for ($i = 0; $i < count($newTablesArray); $i++) {
                 PlanTable::updateOrInsert(
                     [
-                        'svg_id' => $newTablesArray[$i]['svg_id']
+                        'svg_id' => $newTablesArray[$i]['svg_id'],
                     ],
                     [
                         'plan_id' => $newTablesArray[$i]['plan_id'],
@@ -166,8 +174,8 @@ class PlansController extends Controller
                         'cx' => $newTablesArray[$i]['cx'],
                         'cy' => $newTablesArray[$i]['cy'],
                         'd' => $newTablesArray[$i]['d'],
-                        'created_at' =>  \Carbon\Carbon::now(),
-                        'updated_at' => \Carbon\Carbon::now()
+                        'created_at' => \Carbon\Carbon::now(),
+                        'updated_at' => \Carbon\Carbon::now(),
                     ]
                 );
 
@@ -175,28 +183,30 @@ class PlansController extends Controller
 
                 // Update plan_seats table
                 if ($table->id) {
-                    for ($j = 1; $j <= $newTablesArray[$i]['total_seats']; $j++) {
+                    for ($j = 0; $j < $newTablesArray[$i]['total_seats']; $j++) {
                         PlanSeat::updateOrInsert(
                             [
-                            'plan_table_id' => $table->id,
-                            'svg_id' => 'table_' . $newTablesArray[$i]['svg_id'] . '_seat' . $this->formattedTableNumber($j),
-                            'seat_number' => $this->formattedTableNumber($j),
-                            'created_at' =>  \Carbon\Carbon::now(),
-                            'updated_at' => \Carbon\Carbon::now()
+                                'plan_table_id' => $table->id,
+                                'svg_id' => 'table_' . $newTablesArray[$i]['svg_id'] . '_seat' . $this->formattedTableNumber($j + 1),
+                                'seat_number' => $newTablesArray[$i]['seats'][$j]['seat_number'],
+                                // 'price' => $newTablesArray[$i]['seat_price'],
+                                'price' => $newTablesArray[$i]['seats'][$j]['price'],
+                                'created_at' => \Carbon\Carbon::now(),
+                                'updated_at' => \Carbon\Carbon::now(),
                             ]
-                            );
+                        );
                     }
                 }
             }
         }
 
-        // 2) Delete dropped tables
+        // 3) Delete dropped tables
         $deletedTablesArray = $request->deletedTablesArray;
         for ($i = 0; $i < count($deletedTablesArray); $i++) {
             PlanTable::where('id', '=', $deletedTablesArray[$i]['id'])->delete();
         }
 
-        // 3) Save new Plan as SVG images
+        // 4) Save new Plan as SVG image
         if ($request->newPlanSVG) {
             $newSvgFile = fopen('images/svg/plans/' . $request->planSvgId . '.svg', 'w') or die('Unable to open file!');
             $newPlanSVG = $request->newPlanSVG;
@@ -204,32 +214,19 @@ class PlansController extends Controller
             fclose($newSvgFile);
         }
 
-        // return redirect('/');
-        // return redirect()->route('home');
-        // return back();
-        // if ($write != false) {
         return response()->json([
             'status' => 'success',
             'message' => 'Table updated successfully.',
-                // 'tablesArray' => $request->tablesArray,
-                // 'newTablesArray' => $request->newTablesArray,
+            // 'tablesArray' => $request->tablesArray,
+            // 'newTablesArray' => $request->newTablesArray,
             'newPlanSVG' => $request->newPlanSVG,
             '$newTablesArray' => $newTablesArray,
-            '$deletedTablesArray' => $deletedTablesArray
-            ], 200);
-        // } else {
-        //     return response()->json([
-        //         'status' => 'error',
-        //         'message' => "Le plan n'a pas pu être sauvegardé",
-        //         'newPlanSVG' => $request->newPlanSVG,
-        //         '$newTablesArray' => $newTablesArray,
-        //         '$deletedTablesArray' => $deletedTablesArray
-        //     ], 500);
-        // }
-
+            '$deletedTablesArray' => $deletedTablesArray,
+        ], 200);
     }
 
-    protected function delete($id) {
+    protected function deletePlan($id)
+    {
         $plan = Plan::where('id', '=', $id)->first();
 
         // 1) Delete file
@@ -252,7 +249,8 @@ class PlansController extends Controller
         ], 200);
     }
 
-    public function formattedTableNumber ($number) {
+    public function formattedTableNumber($number)
+    {
         return substr("0" . $number, -2);
     }
 }

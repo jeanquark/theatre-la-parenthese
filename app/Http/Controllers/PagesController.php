@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Page;
 use File;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class PagesController extends Controller
 {
@@ -13,24 +14,22 @@ class PagesController extends Controller
     {
         $pages = Page::all();
 
+        return response()->json($pages, 200);
+    }
+
+    public function getPageById(Request $request, $id)
+    {
+        $page = Page::findOrFail($id);
+
         return response()->json([
             'success' => true,
-            'pages' => $pages
+            'page' => $page,
         ], 200);
     }
 
     public function getPageBySlug (Request $request, $slug)
     {
-        // $page = null;
-        // $page = Page::where('slug', '=', 'accueil')->first();
-        // if (strlen($id) = 1) {
-        //     // $page = Page::find($id);
-            // $page = Page::where('id', '=', '5')->first();
-
-        // } else {
-            $page = Page::where('slug', '=', $slug)->first();
-        //     // $page = Page::all();
-        // }
+        $page = Page::where('slug', '=', $slug)->first();
 
         return response()->json([
             'success' => true,
@@ -39,119 +38,163 @@ class PagesController extends Controller
         ], 200);
     }
 
-    protected function create(Request $request)
+    protected function createPage(Request $request)
     {
-        $page = json_decode($request->form);
+        $validatedData = $request->validate([
+            'name' => 'required|unique:pages',
+        ]);
 
-        // return response()->json([
-        //     'success' => true,
-        //     'request->payload' => $request->payload,
-        // ], 201);
+        $page = new Page;
 
-        $newPage = new Page;
+        $page->name = $request->name;
+        $page->slug = str_slug($request->name);
+        $page->content = $request->content;
 
-        $newPage->title = $page->title;
-        $newPage->slug = str_slug($page->title);
-        $newPage->content = $page->content;
+        $page->save();
 
-        $newPage->save();
-  
+        $newPage = Page::find($page->id);
+
         return response()->json([
             'success' => true,
-            'page' => $page,
             'newPage' => $newPage,
         ], 201);
     }
 
-    protected function update(Request $request, $slug)
+    protected function updatePage(Request $request, $id)
     {
-        $updatedPage = $request->updatedPage;
 
-        // return response()->json([
-        //     'success' => true,
-        //     '$slug' => $slug,
-        //     '$updatedPage' => $updatedPage,
-        // ], 200);
+        $validatedData = $request->validate([
+            'name' => ['required', Rule::unique('pages')->ignore($id)],
+        ]);
 
-        $sanitizedUpdatedPage = str_replace('../../../', '/', $updatedPage['content']);
+        $page = Page::find($id);
 
-        // $updatePage = Page::updateOrInsert(
-        //     [
-        //         'slug' => $updatedPage['slug']
-        //     ],
-        //     [
-        //         // 'page' => $updatedPage['page'],
-        //         'content' => $sanitizedUpdatedPage,
-        //         'updated_at' => \Carbon\Carbon::now()
-        //     ]
-        // );
-
-        $updatePage = Page::where('slug', '=', $updatedPage['slug'])->update(
+        $page->updateOrCreate(
+            ['id' => $id],
             [
-                'slug' => $updatedPage['slug'],
-                'title' => $updatedPage['title'],
-                'content' => $sanitizedUpdatedPage,
-                'updated_at' => \Carbon\Carbon::now()
+                'name' => $request->name,
+                'slug' => str_slug($request->name),
+                'content' => $request->content,
+                'is_published' => $request->is_published,
+                'updated_at' => \Carbon\Carbon::now(),
             ]
         );
 
-        $page = Page::where('slug', '=', $updatedPage['slug'])->first();
+        $updatedPage = Page::find($id);
 
         return response()->json([
             'success' => true,
-            // '$request->updatedPage' => $request->updatedPage,
-            // '$abc' => $abc,
-            // 'slug' => $slug,
-            // 'updatedPage' => $updatedPage,
-            // 'sanitizedUpdatedPage' => $sanitizedUpdatedPage,
-            // 'updatePage' => $updatePage,
-            'page' => $page
-        ], 200);
+            'page' => $page,
+            'updatedPage' => $updatedPage
+        ], 201);
     }
 
-    protected function delete($id)
+    protected function deletePage(Request $request, $pageId)
     {
-        $page = Page::where('id', '=', $id)->first();
+        $page = Page::find($pageId);
+
+        // Delete image if exists
+        if (Storage::disk('images')->exists('pages', $page->image)) {
+            Storage::disk('images')->delete('pages', $page->image);
+        }
+
         $page->delete();
 
         return response()->json([
-            'success' => false,
+            'success' => true,
             'page' => $page
-        ], 200);
+        ], 204);
     }
 
-    protected function getImages () 
-    {
-        $images = Storage::disk('images')->allfiles('pages');
+    // protected function updatePage2(Request $request, $slug)
+    // {
+    //     $updatedPage = $request->updatedPage;
 
-        return response()->json([
-            'success' => true,
-            'images' => $images
-        ], 200);
-    }
+    //     // return response()->json([
+    //     //     'success' => true,
+    //     //     '$slug' => $slug,
+    //     //     '$updatedPage' => $updatedPage,
+    //     // ], 200);
 
-    protected function uploadImage(Request $request)
-    {
-        $validatedData = $request->validate([
-            'file' => 'required|file',
-        ]);
+    //     $sanitizedUpdatedPage = str_replace('../../../', '/', $updatedPage['content']);
+
+    //     // $updatePage = Page::updateOrInsert(
+    //     //     [
+    //     //         'slug' => $updatedPage['slug']
+    //     //     ],
+    //     //     [
+    //     //         // 'page' => $updatedPage['page'],
+    //     //         'content' => $sanitizedUpdatedPage,
+    //     //         'updated_at' => \Carbon\Carbon::now()
+    //     //     ]
+    //     // );
+
+    //     $updatePage = Page::where('slug', '=', $updatedPage['slug'])->update(
+    //         [
+    //             'slug' => $updatedPage['slug'],
+    //             'title' => $updatedPage['title'],
+    //             'content' => $sanitizedUpdatedPage,
+    //             'updated_at' => \Carbon\Carbon::now()
+    //         ]
+    //     );
+
+    //     $page = Page::where('slug', '=', $updatedPage['slug'])->first();
+
+    //     return response()->json([
+    //         'success' => true,
+    //         // '$request->updatedPage' => $request->updatedPage,
+    //         // '$abc' => $abc,
+    //         // 'slug' => $slug,
+    //         // 'updatedPage' => $updatedPage,
+    //         // 'sanitizedUpdatedPage' => $sanitizedUpdatedPage,
+    //         // 'updatePage' => $updatePage,
+    //         'page' => $page
+    //     ], 200);
+    // }
+
+    // protected function deletePage2($id)
+    // {
+    //     $page = Page::where('id', '=', $id)->first();
+    //     $page->delete();
+
+    //     return response()->json([
+    //         'success' => false,
+    //         'page' => $page
+    //     ], 200);
+    // }
+
+    // protected function getImages () 
+    // {
+    //     $images = Storage::disk('images')->allfiles('pages');
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'images' => $images
+    //     ], 200);
+    // }
+
+    // protected function uploadImage(Request $request)
+    // {
+    //     $validatedData = $request->validate([
+    //         'file' => 'required|file',
+    //     ]);
 
 
-        // Upload image if present
-        if (File::exists($request->file)) {
-            $file = $request->file->getClientOriginalName(); //Get Image Name
-            // $extension = $request->file->getClientOriginalExtension();  //Get Image Extension
-            // $fileName = $file.'.'.$extension;  //Concatenate both to get FileName (eg: file.jpg)
+    //     // Upload image if present
+    //     if (File::exists($request->file)) {
+    //         $file = $request->file->getClientOriginalName(); //Get Image Name
+    //         // $extension = $request->file->getClientOriginalExtension();  //Get Image Extension
+    //         // $fileName = $file.'.'.$extension;  //Concatenate both to get FileName (eg: file.jpg)
 
-            // $uploadedFile = Storage::disk('images')->put('pages', $request->file);
-            $uploadedFile = Storage::disk('images')->putFileAs('pages', $request->file, $file);
+    //         // $uploadedFile = Storage::disk('images')->put('pages', $request->file);
+    //         $uploadedFile = Storage::disk('images')->putFileAs('pages', $request->file, $file);
 
-        }
+    //     }
 
-        return response()->json([
-            'success' => true,
-            'file' => $file,
-            'location' => $uploadedFile
-        ], 200);
-    }
+    //     return response()->json([
+    //         'success' => true,
+    //         'file' => $file,
+    //         'location' => $uploadedFile
+    //     ], 200);
+    // }
 }
