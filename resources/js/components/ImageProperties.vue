@@ -1,5 +1,5 @@
 <template>
-    <b-row no-gutters align-v="center" class="justify-content-center bg-light" style="border-radius: 3px;">
+    <b-row no-gutters align-v="center" class="justify-content-start bg-light" style="border-radius: 3px;">
         <!-- format: {{ format }} -->
         <b-form-group label="Largeur (px):" label-for="width" class="mx-2">
             <b-form-input type="number" min="0" id="width" v-model="selectedImageProps['width']" @update="updateSelectedImage($event, 'width')"></b-form-input>
@@ -32,7 +32,7 @@ export default {
         return {
             showImagePropertiesSidebar: true,
             keepImageProportions: true,
-            format: Math.round(this.selectedImageProps['width'] / this.selectedImageProps['height'])
+            format: this.selectedImageProps['width'] / this.selectedImageProps['height']
         }
     },
     computed: {},
@@ -57,44 +57,13 @@ export default {
                     this.$emit('updateSelectedImageProperties', this.selectedImageProps['width'], 'width')
                     this.$emit('updateSelectedImageProperties', value, 'height')
                 }
+            } else {
+                this.$emit('updateSelectedImageProperties', value, type)
             }
-            // if (this.keepImageProportions && type === 'width') {
-            // }
-            // if (this.keepImageProportions && type === 'height') {
-            // }
-        },
-        updateSelectedImage2(value, type) {
-            console.log('updateSelectedImage: ', value, type)
-            // const format = this.selectedImageProps['width']/this.selectedImageProps['height']
-            console.log('format: ', this.format)
-            if (this.keepImageProportions && type === 'width') {
-                console.log('Keep image proportions while modifying width')
-                const newWidth = this.selectedImageProps['width']
-                console.log('newWidth: ', newWidth)
-                const newHeight = this.selectedImageProps['width'] / this.format
-                console.log('newHeight: ', newHeight)
-                // this.selectedImageProps['height'] = this.selectedImageProps['width']
-                // this.selectedImageProps['height'] = this.selectedImageProps['width']
-                // this.selectedImageProps['height'] = this.selectedImageProps['width'] * format
-                // this.$emit('updateSelectedImageProperties', this.selectedImageProps['width'], 'heigth')
-                // return
-            }
-            if (this.keepImageProportions && type === 'height') {
-                console.log('Keep image proportions while modifying height')
-                // this.selectedImageProps['width'] = this.selectedImageProps['height']
-                // this.selectedImageProps['width'] = this.selectedImageProps['width'] * format
-                // this.$emit('updateSelectedImageProperties', this.selectedImageProps['height'], 'width')
-            }
-            // else {
-
-            this.$emit('updateSelectedImageProperties', 200, 'height')
-            this.$emit('updateSelectedImageProperties', value, type)
-            // }
         },
         closeModal() {
             console.log('closeModal')
             this.$emit('closeImagePropertiesToast', false)
-            // this.$bvModal.hide('imagesModal')
         }
     }
 }
@@ -105,8 +74,4 @@ export default {
 .icon:hover {
     cursor: pointer;
 }
-// .image:hover {
-//     cursor: pointer;
-//     border: 2px solid $primary;
-// }
 </style>

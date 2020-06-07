@@ -38,7 +38,7 @@
         "pusher-js": "^5.0.3",
         "svg.draggable.js": "^2.2.2",
         "sweetalert2": "^8.10.0",
-        "vform": "^1.0.0",
+        "vform": "^1.0.1",
         "vue": "^2.6.10",
         "vue-burger-menu": "^2.0.3",
         "vue-ctk-date-time-picker": "^2.4.0",

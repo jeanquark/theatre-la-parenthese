@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import Form from 'vForm'
+import Form from 'vform'
 
 // Vue date time picker
 import VueCtkDateTimePicker from 'vue-ctk-date-time-picker'
