@@ -55,13 +55,13 @@
                         </ul>
 
                         <b-row no-gutters v-for="(seat, index) in selectedTable.seats" :key="index">
-                            <b-col cols="6" class="px-2">
+                            <b-col cols="4" class="px-2">
                                 <b-form-group :label="`N° siège`">
                                     <b-form-input v-model="seat['seat_number']"></b-form-input>
                                 </b-form-group>
                             </b-col>
-                            <b-col cols="6" class="px-2">
-                                <b-form-group :label="`Prix du siège`">
+                            <b-col cols="8" class="px-2">
+                                <b-form-group :label="`Prix du siège (centimes)`" :description="`= ${(seat['price'] / 100).toFixed(2)} CHF`">
                                     <b-form-input type="number" v-model="seat['price']"></b-form-input>
                                 </b-form-group>
                             </b-col>

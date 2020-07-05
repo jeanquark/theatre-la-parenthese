@@ -46,6 +46,9 @@
                             Non
                         </span>
                     </template>
+                    <template v-slot:cell(price)="row">
+                        {{ (row.item['price'] / 100).toFixed(2) }}
+                    </template>
                     <template v-slot:cell(table)="row">
                         {{ plan.plan_tables.find(table => table.id === parseInt(row.item.plan_table_id))['table_number'] }}
                     </template>
