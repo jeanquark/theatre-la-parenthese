@@ -6,12 +6,17 @@ Théatre La Parenthèse est le site internet d'une troupe de théâtre.
 
 ## Content
 
-To install Laravel packages:
+To install Laravel packages (`vendor` folder):
 ```bash
 	composer install
 ```
 
-To install node packages:
+To specify application encryption key:
+```bash
+	php artisan key:generate
+```
+
+To install node packages (`node_modules` folder):
 ```bash
 	npm install
 ```
@@ -32,7 +37,7 @@ To create and populate database tables:
 ```
 
 To open database, launch MySQL Workbench
-To see the app, visit theatre-la-parenthese.test in the browser
+To see the app, visit [theatre-la-parenthese.test](http://theatre-la-parenthese.test) in the browser
 
 ## Going live
 

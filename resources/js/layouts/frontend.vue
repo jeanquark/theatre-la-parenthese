@@ -138,7 +138,7 @@ export default {
     flex-shrink: 0;
     /* Prevent Chrome, Opera, and Safari from letting these items shrink to smaller than their content's default minimum size. */
     padding: 20px;
-    height: 100px;
+    /* height: 100px; */
 }
 footer {
     background: $primary;
